@@ -1,0 +1,3347 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>StyleFit AI | Smart Outfit Recommendations</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Montserrat:wght@700;800&display=swap" rel="stylesheet">
+   
+     <!-- Custom CSS -->
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    
+    <!-- Checkout CSS -->
+    <style>
+       
+        .checkout-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+            display: none;
+        }
+        
+        .checkout-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .checkout-header h1 {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 0.5rem;
+        }
+        
+        .checkout-header p {
+            color: #64748b;
+        }
+        
+        .checkout-progress {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 3rem;
+        }
+        
+        .progress-step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            width: 150px;
+        }
+        
+        .progress-step:not(:last-child):after {
+            content: '';
+            position: absolute;
+            top: 20px;
+            left: 70px;
+            width: 80px;
+            height: 2px;
+            background-color: var(--border);
+            z-index: 1;
+        }
+        
+        .step-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 0.5rem;
+            z-index: 2;
+            border: 2px solid var(--border);
+            color: #64748b;
+        }
+        
+        .step-text {
+            font-size: 0.875rem;
+            color: #64748b;
+        }
+        
+        .progress-step.active .step-icon {
+            background-color: var(--primary);
+            border-color: var(--primary);
+            color: white;
+        }
+        
+        .progress-step.active .step-text {
+            color: var(--primary);
+            font-weight: 500;
+        }
+        
+        .progress-step.completed .step-icon {
+            background-color: var(--success);
+            border-color: var(--success);
+            color: white;
+        }
+        
+        .progress-step.completed:after {
+            background-color: var(--success);
+        }
+        
+        .checkout-content {
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            gap: 2rem;
+        }
+        
+        .checkout-form-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            padding: 2rem;
+        }
+        
+        .checkout-section {
+            margin-bottom: 2rem;
+        }
+        
+        .section-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .section-header i {
+            color: var(--primary);
+            margin-right: 0.75rem;
+            font-size: 1.25rem;
+        }
+        
+        .section-header h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--dark);
+            margin: 0;
+        }
+        
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--dark);
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.2s;
+        }
+        
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+        
+        .checkout-row {
+            display: flex;
+            flex-wrap: wrap;
+            margin: 0 -0.5rem;
+        }
+        
+        .checkout-col {
+            flex: 1;
+            padding: 0 0.5rem;
+        }
+        
+        .payment-methods {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .payment-method {
+            flex: 1;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .payment-method:hover {
+            border-color: var(--primary);
+        }
+        
+        .payment-method.active {
+            border-color: var(--primary);
+            background-color: rgba(99, 102, 241, 0.05);
+        }
+        
+        .payment-icon {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+            color: #64748b;
+        }
+        
+        .payment-method.active .payment-icon {
+            color: var(--primary);
+        }
+        
+        .payment-name {
+            font-weight: 500;
+        }
+        
+        .card-element-container {
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 0.75rem 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .card-logos {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+        
+        .card-logo {
+            width: 40px;
+            height: 25px;
+            background-color: #f1f5f9;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            color: #64748b;
+        }
+        
+        .summary-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            padding: 2rem;
+            height: fit-content;
+            position: sticky;
+            top: 2rem;
+        }
+        
+        .summary-header {
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .summary-header h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--dark);
+        }
+        
+        .order-items {
+            margin-bottom: 1.5rem;
+        }
+        
+        .order-item {
+            display: flex;
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .item-image {
+            width: 80px;
+            height: 80px;
+            border-radius: 8px;
+            overflow: hidden;
+            margin-right: 1rem;
+        }
+        
+        .item-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .item-details {
+            flex: 1;
+        }
+        
+        .item-name {
+            font-weight: 500;
+            margin-bottom: 0.25rem;
+        }
+        
+        .item-meta {
+            font-size: 0.875rem;
+            color: #64748b;
+            margin-bottom: 0.5rem;
+        }
+        
+        .item-price {
+            font-weight: 600;
+            color: var(--dark);
+        }
+        
+        .summary-totals {
+            margin-bottom: 1.5rem;
+        }
+        
+        .total-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.75rem;
+        }
+        
+        .total-row:last-child {
+            margin-bottom: 0;
+        }
+        
+        .total-label {
+            color: #64748b;
+        }
+        
+        .total-value {
+            font-weight: 500;
+        }
+        
+        .total-row.final {
+            padding-top: 1rem;
+            border-top: 1px solid var(--border);
+            font-weight: 600;
+            font-size: 1.125rem;
+        }
+        
+        .security-notice {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding: 1rem;
+            background-color: #f0f9ff;
+            border-radius: 8px;
+            font-size: 0.875rem;
+        }
+        
+        .security-notice i {
+            color: var(--primary);
+            margin-right: 0.75rem;
+            font-size: 1.25rem;
+        }
+        
+        .checkout-btn {
+            display: inline-block;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-weight: 500;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+            width: 100%;
+        }
+        
+        .checkout-btn-primary {
+            background-color: var(--primary);
+            color: white;
+        }
+        
+        .checkout-btn-primary:hover {
+            background-color: var(--primary-dark);
+        }
+        
+        .checkout-btn-outline {
+            background-color: transparent;
+            border: 1px solid var(--border);
+            color: #64748b;
+        }
+        
+        .checkout-btn-outline:hover {
+            background-color: #f8fafc;
+        }
+        
+        .payment-processing {
+            display: none;
+            text-align: center;
+            padding: 2rem;
+        }
+        
+        .processing-spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid #f1f5f9;
+            border-top: 4px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1.5rem;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .processing-text {
+            font-size: 1.125rem;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+        }
+        
+        .processing-subtext {
+            color: #64748b;
+        }
+        
+        .payment-success {
+            display: none;
+            text-align: center;
+            padding: 2rem;
+        }
+        
+        .success-icon {
+            width: 80px;
+            height: 80px;
+            background-color: var(--success);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            color: white;
+            font-size: 2rem;
+        }
+        
+        .success-text {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+        
+        .order-id {
+            background-color: #f1f5f9;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            font-family: monospace;
+            margin: 1rem 0;
+            display: inline-block;
+        }
+        
+        .continue-shopping {
+            margin-top: 1.5rem;
+        }
+        
+        @media (max-width: 768px) {
+            .checkout-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .progress-step {
+                width: 100px;
+            }
+            
+            .progress-step:not(:last-child):after {
+                width: 60px;
+                left: 50px;
+            }
+        }
+
+        /* Back to shopping button */
+        .back-to-shopping {
+            margin-bottom: 2rem;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light fixed-top">
+        <div class="container">
+            <a class="navbar-brand logo" href="#">
+                <i class="fas fa-tshirt"></i>
+                StyleFit AI
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#" id="home-link">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Shop</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Collections</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">About</a>
+                    </li>
+                </ul>
+                <div class="d-flex align-items-center">
+                    <div class="input-group me-3" style="max-width: 300px;">
+                        <input type="text" class="form-control form-control-modern" placeholder="Search products...">
+                        <button class="btn btn-modern" type="button">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                    <div class="position-relative me-3">
+                        <button class="btn btn-outline-modern" id="cart-button">
+                            <i class="fas fa-shopping-cart"></i>
+                            <span class="cart-badge" id="cart-count">0</span>
+                        </button>
+                    </div>
+                    <div class="position-relative me-3">
+                        <button class="btn btn-outline-modern" id="wishlist-button">
+                            <i class="fas fa-heart"></i>
+                            <span class="cart-badge" id="wishlist-count">0</span>
+                        </button>
+                    </div>
+                    <div class="dropdown">
+                        <button class="btn btn-outline-modern dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-user"></i>
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="#">Profile</a></li>
+                            <li><a class="dropdown-item" href="#">Orders</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="#">Sign Out</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="container">
+            <h1 class="hero-title">Find Your Perfect Fit & Style</h1>
+            <p class="hero-subtitle">Upload a full-body photo or use your camera to get AI-powered measurements, size recommendations, and personalized style suggestions.</p>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <div class="container my-4" id="main-content">
+
+        <!-- Category Section -->
+        <div class="category-section">
+            <h3 class="mb-4">Shop by Category</h3>
+            <div class="row g-4">
+                <div class="col-md-3 col-6">
+                    <div class="category-card">
+                        <div class="category-icon">
+                            <i class="fas fa-tshirt"></i>
+                        </div>
+                        <h5 class="category-title">T-Shirts</h5>
+                        <p class="category-description">Casual & comfortable</p>
+                    </div>
+                </div>
+                <div class="col-md-3 col-6">
+                    <div class="category-card">
+                        <div class="category-icon">
+                            <i class="fas fa-shirt"></i>
+                        </div>
+                        <h5 class="category-title">Shirts</h5>
+                        <p class="category-description">Formal & casual</p>
+                    </div>
+                </div>
+                <div class="col-md-3 col-6">
+                    <div class="category-card">
+                        <div class="category-icon">
+                            <i class="fas fa-vest"></i>
+                        </div>
+                        <h5 class="category-title">Outerwear</h5>
+                        <p class="category-description">Jackets & hoodies</p>
+                    </div>
+                </div>
+                <div class="col-md-3 col-6">
+                    <div class="category-card">
+                        <div class="category-icon">
+                            <i class="fas fa-socks"></i>
+                        </div>
+                        <h5 class="category-title">Accessories</h5>
+                        <p class="category-description">Complete your look</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row g-4">
+            <!-- Column 1: Inputs & Filters -->
+            <div class="col-lg-4">
+                <!-- File Upload Card -->
+                <div class="card-modern">
+                    <div class="card-header-modern">
+                        <h4><i class="fas fa-cloud-upload-alt"></i> Upload Your Photo</h4>
+                    </div>
+                    <div class="card-body-modern">
+                        <form method="post" enctype="multipart/form-data" id="upload-form">
+                            {% csrf_token %}
+                            <div class="mb-3">
+                                <label for="image_upload" class="form-label">Choose a full-body image</label>
+                                <input class="form-control form-control-modern" type="file" id="image_upload" name="image_upload" accept="image/*" required>
+                            </div>
+                            <button type="submit" class="btn btn-modern w-100">
+                                <i class="fas fa-magic"></i> Analyze Uploaded Image
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Camera Capture Card -->
+                <div class="card-modern">
+                    <div class="card-header-modern">
+                        <h4><i class="fas fa-camera"></i> Use Your Camera</h4>
+                    </div>
+                    <div class="card-body-modern text-center">
+                        <div class="camera-container">
+                            <video id="camera-feed" playsinline autoplay></video>
+                            <div class="camera-overlay">
+                                <button id="snap-photo" class="btn btn-modern">
+                                    <i class="fas fa-camera"></i> Capture
+                                </button>
+                            </div>
+                        </div>
+                        <canvas id="canvas" class="d-none"></canvas>
+                        <div class="mt-3">
+                            <button id="start-camera" class="btn btn-secondary-modern">
+                                <i class="fas fa-video"></i> Start Camera
+                            </button>
+                        </div>
+                        <form method="post" id="camera-form">
+                            {% csrf_token %}
+                            <input type="hidden" name="image_data" id="image-data">
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Seasonal Filters -->
+                <div class="seasonal-filters">
+                    <h5 class="filter-title"><i class="fas fa-cloud-sun"></i> Seasonal Collections</h5>
+                    <div class="row g-2">
+                        <div class="col-4">
+                            <div class="seasonal-option active" data-season="summer">
+                                <div class="seasonal-icon summer-icon">
+                                    <i class="fas fa-sun"></i>
+                                </div>
+                                <div class="seasonal-name">Summer</div>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="seasonal-option" data-season="winter">
+                                <div class="seasonal-icon winter-icon">
+                                    <i class="fas fa-snowflake"></i>
+                                </div>
+                                <div class="seasonal-name">Winter</div>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="seasonal-option" data-season="autumn">
+                                <div class="seasonal-icon autumn-icon">
+                                    <i class="fas fa-leaf"></i>
+                                </div>
+                                <div class="seasonal-name">Autumn</div>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="seasonal-option" data-season="spring">
+                                <div class="seasonal-icon spring-icon">
+                                    <i class="fas fa-seedling"></i>
+                                </div>
+                                <div class="seasonal-name">Spring</div>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="seasonal-option" data-season="rainy">
+                                <div class="seasonal-icon rainy-icon">
+                                    <i class="fas fa-cloud-rain"></i>
+                                </div>
+                                <div class="seasonal-name">Rainy</div>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="seasonal-option" data-season="all">
+                                <div class="seasonal-icon" style="background: linear-gradient(135deg, var(--primary), var(--primary-dark));">
+                                    <i class="fas fa-infinity"></i>
+                                </div>
+                                <div class="seasonal-name">All</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Product Type Filters -->
+                <div class="filter-section">
+                    <h5 class="filter-title"><i class="fas fa-tshirt"></i> Product Types</h5>
+                    <div class="filter-options">
+                        <div class="filter-option active" data-type="all">All</div>
+                        <div class="filter-option" data-type="shirts">Shirts</div>
+                        <div class="filter-option" data-type="t-shirts">T-Shirts</div>
+                        <div class="filter-option" data-type="polos">Polos</div>
+                        <div class="filter-option" data-type="casual">Casual</div>
+                        <div class="filter-option" data-type="formal">Formal</div>
+                    </div>
+                </div>
+
+                <!-- Price Range Filters -->
+                <div class="filter-section">
+                    <h5 class="filter-title"><i class="fas fa-tags"></i> Price Range</h5>
+                    <div class="filter-options">
+                        <div class="filter-option active" data-price="all">All Prices</div>
+                        <div class="filter-option" data-price="under-1000">Under ₹1000</div>
+                        <div class="filter-option" data-price="1000-2000">₹1000 - ₹2000</div>
+                        <div class="filter-option" data-price="2000-5000">₹2000 - ₹5000</div>
+                        <div class="filter-option" data-price="over-5000">Over ₹5000</div>
+                    </div>
+                </div>
+
+                <!-- Special Filters -->
+                <div class="filter-section">
+                    <h5 class="filter-title"><i class="fas fa-star"></i> Special</h5>
+                    <div class="filter-options">
+                        <div class="filter-option" data-special="bestsellers">Best Sellers</div>
+                        <div class="filter-option" data-special="new-arrivals">New Arrivals</div>
+                        <div class="filter-option" data-special="discounted">Discounted</div>
+                        <div class="filter-option" data-special="trending">Trending</div>
+                    </div>
+                </div>
+
+                <!-- Advanced Filters -->
+                <div class="advanced-filters">
+                    <h5 class="filter-title"><i class="fas fa-sliders-h"></i> Advanced Filters</h5>
+                    
+                    <div class="filter-group">
+                        <h6 class="filter-group-title"><i class="fas fa-tags"></i> Price Range</h6>
+                        <div class="price-range">
+                            <input type="number" class="form-control price-input" placeholder="Min" id="min-price">
+                            <span>-</span>
+                            <input type="number" class="form-control price-input" placeholder="Max" id="max-price">
+                            <button class="btn btn-modern" id="apply-price-filter">
+                                <i class="fas fa-check"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <h6 class="filter-group-title"><i class="fas fa-palette"></i> Colors</h6>
+                        <div class="d-flex flex-wrap gap-2">
+                            <div class="color-filter-option active" style="background-color: #000000;" data-color="black"></div>
+                            <div class="color-filter-option" style="background-color: #ffffff; border: 1px solid #e2e8f0;" data-color="white"></div>
+                            <div class="color-filter-option" style="background-color: #3b82f6;" data-color="blue"></div>
+                            <div class="color-filter-option" style="background-color: #ef4444;" data-color="red"></div>
+                            <div class="color-filter-option" style="background-color: #10b981;" data-color="green"></div>
+                            <div class="color-filter-option" style="background-color: #f59e0b;" data-color="yellow"></div>
+                            <div class="color-filter-option" style="background-color: #8b5cf6;" data-color="purple"></div>
+                            <div class="color-filter-option" style="background-color: #64748b;" data-color="gray"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <h6 class="filter-group-title"><i class="fas fa-ruler-combined"></i> Sizes</h6>
+                        <div class="d-flex flex-wrap gap-2">
+                            <div class="filter-option active">All</div>
+                            <div class="filter-option">XS</div>
+                            <div class="filter-option">S</div>
+                            <div class="filter-option">M</div>
+                            <div class="filter-option">L</div>
+                            <div class="filter-option">XL</div>
+                            <div class="filter-option">XXL</div>
+                        </div>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <h6 class="filter-group-title"><i class="fas fa-star"></i> Customer Ratings</h6>
+                        <div class="d-flex flex-column gap-2">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="rating-5" checked>
+                                <label class="form-check-label" for="rating-5">
+                                    <i class="fas fa-star text-warning"></i>
+                                    <i class="fas fa-star text-warning"></i>
+                                    <i class="fas fa-star text-warning"></i>
+                                    <i class="fas fa-star text-warning"></i>
+                                    <i class="fas fa-star text-warning"></i> & Up
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="rating-4" checked>
+                                <label class="form-check-label" for="rating-4">
+                                    <i class="fas fa-star text-warning"></i>
+                                    <i class="fas fa-star text-warning"></i>
+                                    <i class="fas fa-star text-warning"></i>
+                                    <i class="fas fa-star text-warning"></i> & Up
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="rating-3" checked>
+                                <label class="form-check-label" for="rating-3">
+                                    <i class="fas fa-star text-warning"></i>
+                                    <i class="fas fa-star text-warning"></i>
+                                    <i class="fas fa-star text-warning"></i> & Up
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <button class="btn btn-modern w-100 mt-3" id="apply-filters">
+                        <i class="fas fa-filter"></i> Apply Filters
+                    </button>
+                </div>
+
+                <!-- Features Section -->
+                <div class="card-modern">
+                    <div class="card-body-modern">
+                        <h5 class="mb-4">How It Works</h5>
+                        <div class="row">
+                            <div class="col-12 mb-3">
+                                <div class="feature-icon mx-auto">
+                                    <i class="fas fa-ruler-combined"></i>
+                                </div>
+                                <h6 class="text-center">Body Measurements</h6>
+                                <p class="small text-muted text-center">AI analyzes your body proportions</p>
+                            </div>
+                            <div class="col-12 mb-3">
+                                <div class="feature-icon mx-auto">
+                                    <i class="fas fa-tshirt"></i>
+                                </div>
+                                <h6 class="text-center">Size Recommendation</h6>
+                                <p class="small text-muted text-center">Get your perfect fit size</p>
+                            </div>
+                            <div class="col-12 mb-3">
+                                <div class="feature-icon mx-auto">
+                                    <i class="fas fa-palette"></i>
+                                </div>
+                                <h6 class="text-center">Style Suggestions</h6>
+                                <p class="small text-muted text-center">Colors and styles that suit you</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Column 2: Results & Products -->
+            <div class="col-lg-8">
+                <!-- Loading Spinner -->
+                <div class="loading-spinner" id="loading-spinner">
+                    <div class="spinner"></div>
+                    <p>Analyzing your image and generating recommendations...</p>
+                </div>
+
+                <!-- Results Section -->
+                <div class="results-section" id="results-section">
+                    <div class="card-modern">
+                        <div class="card-header-modern">
+                            <h4><i class="fas fa-chart-line"></i> Analysis Results</h4>
+                        </div>
+                        <div class="card-body-modern">
+                            {% if results %}
+                                {% if processed_image %}
+                                <div class="text-center mb-4">
+                                    <img src="{{ processed_image }}" class="img-fluid rounded border" alt="Processed Image with Landmarks">
+                                </div>
+                                {% endif %}
+
+                                <!-- Display error or results table -->
+                                {% if results.error %}
+                                <div class="alert alert-danger" role="alert">
+                                    <strong>Error:</strong> {{ results.error }}
+                                </div>
+                                {% else %}
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <div class="card-modern h-100">
+                                            <div class="card-body-modern text-center">
+                                                <h6 class="text-muted">Estimated Height</h6>
+                                                <h4 class="text-primary">{{ results.height }}</h4>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <div class="card-modern h-100">
+                                            <div class="card-body-modern text-center">
+                                                <h6 class="text-muted">Estimated Chest</h6>
+                                                <h4 class="text-primary">{{ results.chest }}</h4>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="card-modern mb-3">
+                                    <div class="card-body-modern">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <div>
+                                                <h6 class="text-muted mb-1">Suggested Size</h6>
+                                                <h4 class="text-primary">{{ results.size }}</h4>
+                                            </div>
+                                            <span class="result-badge">Perfect Fit</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="card-modern mb-3">
+                                    <div class="card-body-modern">
+                                        <h6 class="text-muted mb-2">Detected Skin Tone</h6>
+                                        <h5>{{ results.skin_tone }}</h5>
+                                    </div>
+                                </div>
+
+                                <!-- Dynamic Color Recommendations -->
+                                <div class="card-modern">
+                                    <div class="card-body-modern">
+                                        <h6 class="text-muted mb-2">Recommended Colors</h6>
+                                        {% if results.colors %}
+                                            <p class="mb-3">{{ results.colors }}</p>
+                                            <div class="color-palette" id="dynamic-colors">
+                                                {% for hex_code in results.color_hex_codes %}
+                                                    <div class="color-swatch" style="background-color: {{ hex_code }};" 
+                                                         title="{{ results.colors.split|slice:forloop.counter|first }}"></div>
+                                                {% endfor %}
+                                            </div>
+                                        {% else %}
+                                            <p class="text-muted">Color analysis not available</p>
+                                            <div class="color-palette">
+                                                <div class="color-swatch" style="background-color: #3b82f6;"></div>
+                                                <div class="color-swatch" style="background-color: #10b981;"></div>
+                                                <div class="color-swatch" style="background-color: #f59e0b;"></div>
+                                                <div class="color-swatch" style="background-color: #ef4444;"></div>
+                                                <div class="color-swatch" style="background-color: #8b5cf6;"></div>
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                {% endif %}
+                            {% else %}
+                                <div class="text-center py-4">
+                                    <i class="fas fa-image fa-3x text-muted mb-3"></i>
+                                    <p class="text-muted">Your results will appear here after you provide an image.</p>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Product Grid Header -->
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h4>Recommended For You</h4>
+                        <div class="d-flex gap-2">
+                            <div class="dropdown">
+                                <button class="btn btn-outline-modern dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                    <i class="fas fa-sort"></i> Sort By
+                                </button>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" href="#" data-sort="featured">Featured</a></li>
+                                    <li><a class="dropdown-item" href="#" data-sort="price-low">Price: Low to High</a></li>
+                                    <li><a class="dropdown-item" href="#" data-sort="price-high">Price: High to Low</a></li>
+                                    <li><a class="dropdown-item" href="#" data-sort="rating">Customer Rating</a></li>
+                                    <li><a class="dropdown-item" href="#" data-sort="newest">Newest Arrivals</a></li>
+                                </ul>
+                            </div>
+                            <div class="btn-group" role="group">
+                                <input type="radio" class="btn-check" name="view-mode" id="grid-view" autocomplete="off" checked>
+                                <label class="btn btn-outline-modern" for="grid-view">
+                                    <i class="fas fa-th"></i>
+                                </label>
+                                <input type="radio" class="btn-check" name="view-mode" id="list-view" autocomplete="off">
+                                <label class="btn btn-outline-modern" for="list-view">
+                                    <i class="fas fa-list"></i>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Products Grid -->
+                    <div class="row" id="product-grid">
+                        <!-- Product cards will be dynamically inserted here -->
+                    </div>
+
+                    <!-- Load More Button -->
+                    <div class="text-center mt-4">
+                        <button class="btn btn-modern" id="load-more">
+                            <i class="fas fa-plus"></i> Load More Products
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Testimonials Section -->
+        <div class="testimonial-section">
+            <h3 class="mb-4 text-center">What Our Customers Say</h3>
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="testimonial-card">
+                        <div class="testimonial-text">
+                            "StyleFit AI helped me find the perfect size for the first time! No more returns and exchanges."
+                        </div>
+                        <div class="testimonial-author">
+                            <img src="https://randomuser.me/api/portraits/men/32.jpg" class="testimonial-avatar" alt="Customer">
+                            <div>
+                                <div class="testimonial-name">Michael Johnson</div>
+                                <div class="testimonial-role">Verified Customer</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="testimonial-card">
+                        <div class="testimonial-text">
+                            "The color recommendations were spot on! I've received so many compliments on my new outfits."
+                        </div>
+                        <div class="testimonial-author">
+                            <img src="https://randomuser.me/api/portraits/women/44.jpg" class="testimonial-avatar" alt="Customer">
+                            <div>
+                                <div class="testimonial-name">Sarah Williams</div>
+                                <div class="testimonial-role">Fashion Blogger</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="testimonial-card">
+                        <div class="testimonial-text">
+                            "As someone who hates shopping, this service has been a game-changer. Quick, accurate, and convenient!"
+                        </div>
+                        <div class="testimonial-author">
+                            <img src="https://randomuser.me/api/portraits/men/67.jpg" class="testimonial-avatar" alt="Customer">
+                            <div>
+                                <div class="testimonial-name">David Chen</div>
+                                <div class="testimonial-role">Tech Professional</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Checkout Section -->
+    <div class="checkout-container" id="checkout-container">
+        <div class="back-to-shopping">
+            <button class="btn btn-outline-modern" id="back-to-shopping">
+                <i class="fas fa-arrow-left"></i> Back to Shopping
+            </button>
+        </div>
+        
+        <div class="checkout-header">
+            <h1>Complete Your Purchase</h1>
+            <p>Review your order and securely complete your payment</p>
+        </div>
+        
+        <div class="checkout-progress">
+            <div class="progress-step completed">
+                <div class="step-icon">
+                    <i class="fas fa-shopping-cart"></i>
+                </div>
+                <div class="step-text">Cart</div>
+            </div>
+            <div class="progress-step completed">
+                <div class="step-icon">
+                    <i class="fas fa-user"></i>
+                </div>
+                <div class="step-text">Details</div>
+            </div>
+            <div class="progress-step active">
+                <div class="step-icon">
+                    <i class="fas fa-lock"></i>
+                </div>
+                <div class="step-text">Payment</div>
+            </div>
+            <div class="progress-step">
+                <div class="step-icon">
+                    <i class="fas fa-check"></i>
+                </div>
+                <div class="step-text">Confirmation</div>
+            </div>
+        </div>
+        
+        <div class="checkout-content">
+            <div class="checkout-form-container">
+                <div id="payment-form">
+                    <div class="checkout-section">
+                        <div class="section-header">
+                            <i class="fas fa-shipping-fast"></i>
+                            <h3>Shipping Information</h3>
+                        </div>
+                        
+                        <div class="checkout-row">
+                            <div class="checkout-col">
+                                <div class="form-group">
+                                    <label class="form-label" for="first-name">First Name</label>
+                                    <input type="text" class="form-control" id="first-name" value="John" readonly>
+                                </div>
+                            </div>
+                            <div class="checkout-col">
+                                <div class="form-group">
+                                    <label class="form-label" for="last-name">Last Name</label>
+                                    <input type="text" class="form-control" id="last-name" value="Doe" readonly>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label" for="address">Address</label>
+                            <input type="text" class="form-control" id="address" value="123 Fashion Street" readonly>
+                        </div>
+                        
+                        <div class="checkout-row">
+                            <div class="checkout-col">
+                                <div class="form-group">
+                                    <label class="form-label" for="city">City</label>
+                                    <input type="text" class="form-control" id="city" value="Style City" readonly>
+                                </div>
+                            </div>
+                            <div class="checkout-col">
+                                <div class="form-group">
+                                    <label class="form-label" for="state">State</label>
+                                    <input type="text" class="form-control" id="state" value="Fashion State" readonly>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="checkout-row">
+                            <div class="checkout-col">
+                                <div class="form-group">
+                                    <label class="form-label" for="zip">ZIP Code</label>
+                                    <input type="text" class="form-control" id="zip" value="12345" readonly>
+                                </div>
+                            </div>
+                            <div class="checkout-col">
+                                <div class="form-group">
+                                    <label class="form-label" for="country">Country</label>
+                                    <input type="text" class="form-control" id="country" value="United States" readonly>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="checkout-section">
+                        <div class="section-header">
+                            <i class="fas fa-credit-card"></i>
+                            <h3>Payment Method</h3>
+                        </div>
+                        
+                        <div class="payment-methods">
+                            <div class="payment-method active" data-method="card">
+                                <div class="payment-icon">
+                                    <i class="far fa-credit-card"></i>
+                                </div>
+                                <div class="payment-name">Credit Card</div>
+                            </div>
+                            <div class="payment-method" data-method="paypal">
+                                <div class="payment-icon">
+                                    <i class="fab fa-paypal"></i>
+                                </div>
+                                <div class="payment-name">PayPal</div>
+                            </div>
+                            <div class="payment-method" data-method="upi">
+                                <div class="payment-icon">
+                                    <i class="fas fa-mobile-alt"></i>
+                                </div>
+                                <div class="payment-name">UPI</div>
+                            </div>
+                        </div>
+                        
+                        <div id="card-details">
+                            <div class="form-group">
+                                <label class="form-label" for="card-number">Card Number</label>
+                                <input type="text" class="form-control" id="card-number" placeholder="1234 5678 9012 3456">
+                                <div class="card-logos">
+                                    <div class="card-logo">VISA</div>
+                                    <div class="card-logo">MC</div>
+                                    <div class="card-logo">AMEX</div>
+                                </div>
+                            </div>
+                            
+                            <div class="checkout-row">
+                                <div class="checkout-col">
+                                    <div class="form-group">
+                                        <label class="form-label" for="expiry">Expiry Date</label>
+                                        <input type="text" class="form-control" id="expiry" placeholder="MM/YY">
+                                    </div>
+                                </div>
+                                <div class="checkout-col">
+                                    <div class="form-group">
+                                        <label class="form-label" for="cvv">CVV</label>
+                                        <input type="text" class="form-control" id="cvv" placeholder="123">
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label" for="card-name">Name on Card</label>
+                                <input type="text" class="form-control" id="card-name" placeholder="John Doe">
+                            </div>
+                        </div>
+                        
+                        <div id="paypal-details" style="display: none;">
+                            <div class="form-group">
+                                <p>You will be redirected to PayPal to complete your payment securely.</p>
+                            </div>
+                        </div>
+                        
+                        <div id="upi-details" style="display: none;">
+                            <div class="form-group">
+                                <label class="form-label" for="upi-id">UPI ID</label>
+                                <input type="text" class="form-control" id="upi-id" placeholder="yourname@upi">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="security-notice">
+                        <i class="fas fa-shield-alt"></i>
+                        <div>
+                            <strong>Secure Payment</strong>
+                            <p>Your payment information is encrypted and secure. We do not store your card details.</p>
+                        </div>
+                    </div>
+                    
+                    <button id="pay-button" class="checkout-btn checkout-btn-primary">
+                        <i class="fas fa-lock"></i> Complete Payment - ₹<span id="checkout-total-amount">0.00</span>
+                    </button>
+                </div>
+                
+                <div class="payment-processing" id="payment-processing">
+                    <div class="processing-spinner"></div>
+                    <div class="processing-text">Processing Payment</div>
+                    <div class="processing-subtext">Please wait while we process your payment</div>
+                </div>
+                
+                <div class="payment-success" id="payment-success">
+                    <div class="success-icon">
+                        <i class="fas fa-check"></i>
+                    </div>
+                    <div class="success-text">Payment Successful!</div>
+                    <p>Thank you for your purchase. Your order has been confirmed.</p>
+                    <div class="order-id">ORDER #SF-<span id="order-number">0000</span></div>
+                    <p>We've sent a confirmation email to john.doe@example.com</p>
+                    <div class="continue-shopping">
+                        <button class="checkout-btn checkout-btn-outline" id="continue-shopping">
+                            <i class="fas fa-shopping-bag"></i> Continue Shopping
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="summary-container">
+                <div class="summary-header">
+                    <h3>Order Summary</h3>
+                </div>
+                
+                <div class="order-items" id="checkout-order-items">
+                    <!-- Order items will be dynamically inserted here -->
+                </div>
+                
+                <div class="summary-totals">
+                    <div class="total-row">
+                        <span class="total-label">Subtotal</span>
+                        <span class="total-value">₹<span id="checkout-subtotal">0.00</span></span>
+                    </div>
+                    <div class="total-row">
+                        <span class="total-label">Shipping</span>
+                        <span class="total-value">₹<span id="checkout-shipping">0.00</span></span>
+                    </div>
+                    <div class="total-row">
+                        <span class="total-label">Tax</span>
+                        <span class="total-value">₹<span id="checkout-tax">0.00</span></span>
+                    </div>
+                    <div class="total-row final">
+                        <span class="total-label">Total</span>
+                        <span class="total-value">₹<span id="checkout-final-total">0.00</span></span>
+                    </div>
+                </div>
+                
+                <div class="security-notice">
+                    <i class="fas fa-undo"></i>
+                    <div>
+                        <strong>Easy Returns</strong>
+                        <p>30-day return policy. Free returns within India.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-4 mb-4">
+                    <div class="footer-logo">
+                        <i class="fas fa-tshirt"></i>
+                        StyleFit AI
+                    </div>
+                    <p>AI-powered outfit recommendations for the perfect fit and style.</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-md-6 mb-4">
+                    <h5>Quick Links</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="#" class="text-light text-decoration-none">Home</a></li>
+                        <li><a href="#" class="text-light text-decoration-none">Shop</a></li>
+                        <li><a href="#" class="text-light text-decoration-none">Collections</a></li>
+                        <li><a href="#" class="text-light text-decoration-none">About</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <h5>Customer Service</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="#" class="text-light text-decoration-none">Shipping Info</a></li>
+                        <li><a href="#" class="text-light text-decoration-none">Returns & Exchanges</a></li>
+                        <li><a href="#" class="text-light text-decoration-none">Size Guide</a></li>
+                        <li><a href="#" class="text-light text-decoration-none">Contact Us</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <h5>Contact Us</h5>
+                    <ul class="list-unstyled">
+                        <li><i class="fas fa-envelope me-2"></i> support@stylefitai.com</li>
+                        <li><i class="fas fa-phone me-2"></i> +1 (555) 123-4567</li>
+                        <li><i class="fas fa-map-marker-alt me-2"></i> 123 Fashion St, Style City</li>
+                    </ul>
+                </div>
+            </div>
+            <hr class="bg-light">
+            <div class="text-center pt-2">
+                <p>&copy; 2025 StyleFit AI. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Cart Sidebar -->
+    <div class="cart-overlay" id="cart-overlay"></div>
+    <div class="cart-sidebar" id="cart-sidebar">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h4>Your Shopping Cart</h4>
+            <button class="btn btn-outline-modern" id="close-cart">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div id="cart-items">
+            <!-- Cart items will be dynamically inserted here -->
+        </div>
+        <div class="cart-total">
+            Total: ₹<span id="cart-total-amount">0.00</span>
+        </div>
+        <button class="btn btn-modern w-100" id="checkout-button">
+            <i class="fas fa-credit-card"></i> Proceed to Checkout
+        </button>
+    </div>
+
+    <!-- Wishlist Sidebar -->
+    <div class="cart-sidebar" id="wishlist-sidebar">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h4>Your Wishlist</h4>
+            <button class="btn btn-outline-modern" id="close-wishlist">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div id="wishlist-items">
+            <!-- Wishlist items will be dynamically inserted here -->
+        </div>
+        <button class="btn btn-modern w-100 mt-3" id="move-all-to-cart">
+            <i class="fas fa-shopping-cart"></i> Move All to Cart
+        </button>
+    </div>
+
+    <!-- Notification -->
+    <div class="notification" id="notification">
+        <i class="fas fa-check-circle"></i>
+        <span id="notification-text">Product added to cart!</span>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+      // Enhanced product data with 100+ products and professional images
+const products = [
+    {
+        id: 1,
+        title: "Premium Cotton Crew Neck T-Shirt",
+        price: 899,
+        originalPrice: 1299,
+        rating: 4.5,
+        reviews: 12450,
+        image: "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=500&h=600&fit=crop",
+        link: "#",
+        sizes: ["S", "M", "L", "XL"],
+        colors: ["Black", "White", "Navy", "Gray"],
+        category: "T-Shirts",
+        season: "summer",
+        isBestseller: true,
+        stock: 45,
+        sold: 1250,
+        freeShipping: true,
+        type: "t-shirts",
+        style: "casual"
+    },
+    {
+        id: 2,
+        title: "Slim Fit Business Shirt",
+        price: 2199,
+        originalPrice: 2999,
+        rating: 4.4,
+        reviews: 8234,
+        image: "https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=500&h=600&fit=crop",
+        link: "#",
+        sizes: ["S", "M", "L", "XL", "XXL"],
+        colors: ["Blue", "White", "Pink", "Green"],
+        category: "Shirts",
+        season: "spring",
+        isNew: true,
+        stock: 23,
+        sold: 890,
+        freeShipping: true,
+        type: "shirts",
+        style: "formal"
+    },
+    {
+        id: 3,
+        title: "Heavyweight Fleece Hoodie",
+        price: 2899,
+        originalPrice: 3699,
+        rating: 4.7,
+        reviews: 15678,
+        image: "https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=500&h=600&fit=crop",
+        link: "#",
+        sizes: ["S", "M", "L", "XL", "XXL"],
+        colors: ["Black", "Gray", "Navy", "Red"],
+        category: "Outerwear",
+        season: "winter",
+        isBestseller: true,
+        stock: 12,
+        sold: 3450,
+        freeShipping: true,
+        type: "outerwear",
+        style: "casual"
+    },
+    {
+        id: 4,
+        title: "Slim Fit Denim Jeans - Dark Wash",
+        price: 3299,
+        originalPrice: 4399,
+        rating: 4.6,
+        reviews: 9234,
+        image: "https://images.unsplash.com/photo-1542272604-787c3835535d?w=500&h=600&fit=crop",
+        link: "#",
+        sizes: ["30x30", "32x30", "32x32", "34x32"],
+        colors: ["Dark Blue", "Black", "Light Blue"],
+        category: "Bottoms",
+        season: "all",
+        stock: 34,
+        sold: 5670,
+        freeShipping: true,
+        type: "bottoms",
+        style: "casual"
+    },
+    {
+        id: 5,
+        title: "Performance Golf Polo Shirt",
+        price: 1799,
+        originalPrice: 2599,
+        rating: 4.5,
+        reviews: 7234,
+        image: "https://images.unsplash.com/photo-1586790170083-2f9ceadc732d?w=500&h=600&fit=crop",
+        link: "#",
+        sizes: ["S", "M", "L", "XL", "XXL"],
+        colors: ["Black", "White", "Navy", "Red"],
+        category: "Polos",
+        season: "summer",
+        isNew: true,
+        stock: 56,
+        sold: 2340,
+        freeShipping: true,
+        type: "polos",
+        style: "casual"
+    },
+    {
+        id: 6,
+        title: "Classic Chino Pants",
+        price: 2199,
+        originalPrice: 2999,
+        rating: 4.4,
+        reviews: 5678,
+        image: "https://images.unsplash.com/photo-1473966968600-fa801b869a1a?w=500&h=600&fit=crop",
+        link: "#",
+        sizes: ["30x30", "32x30", "32x32", "34x32", "36x32"],
+        colors: ["Khaki", "Navy", "Gray", "Olive"],
+        category: "Bottoms",
+        season: "all",
+        stock: 47,
+        sold: 2780,
+        freeShipping: true,
+        type: "bottoms",
+        style: "casual"
+    },
+    {
+        id: 7,
+        title: "Wool Blend Sweater",
+        price: 4799,
+        rating: 4.7,
+        reviews: 6234,
+        image: "https://images.unsplash.com/photo-1434389677669-e08b4cac3105?w=500&h=600&fit=crop",
+        link: "#",
+        sizes: ["S", "M", "L", "XL"],
+        colors: ["Black", "Gray", "Blue", "Green"],
+        category: "Outerwear",
+        season: "autumn",
+        stock: 22,
+        sold: 2340,
+        freeShipping: true,
+        type: "outerwear",
+        style: "casual"
+    },
+    {
+        id: 8,
+        title: "Lightweight Summer Jacket",
+        price: 3199,
+        rating: 4.3,
+        reviews: 1234,
+        image: "https://images.unsplash.com/photo-1551028719-00167b16eac5?w=500&h=600&fit=crop",
+        link: "#",
+        sizes: ["S", "M", "L", "XL"],
+        colors: ["Beige", "Khaki", "Navy"],
+        category: "Outerwear",
+        season: "spring",
+        stock: 18,
+        sold: 450,
+        freeShipping: true,
+        type: "outerwear",
+        style: "casual"
+    },
+    {
+        id: 9,
+        title: "Formal Dress Shirt - White",
+        price: 1899,
+        originalPrice: 2499,
+        rating: 4.5,
+        reviews: 3456,
+        image: "https://images.unsplash.com/photo-1621072156002-e2fccdc0b176?w=500&h=600&fit=crop",
+        link: "#",
+        sizes: ["S", "M", "L", "XL", "XXL"],
+        colors: ["White", "Light Blue", "Pink"],
+        category: "Shirts",
+        season: "all",
+        isBestseller: true,
+        stock: 42,
+        sold: 2100,
+        freeShipping: true,
+        type: "shirts",
+        style: "formal"
+    },
+    {
+        id: 10,
+        title: "Denim Jacket - Classic Blue",
+        price: 3899,
+        originalPrice: 4999,
+        rating: 4.7,
+        reviews: 1890,
+        image: "https://images.unsplash.com/photo-1551698618-1dfe5d97d256?w=500&h=600&fit=crop",
+        link: "#",
+        sizes: ["S", "M", "L", "XL"],
+        colors: ["Blue", "Black"],
+        category: "Outerwear",
+        season: "autumn",
+        isBestseller: true,
+        stock: 22,
+        sold: 980,
+        freeShipping: true,
+        type: "outerwear",
+        style: "casual"
+    },
+    {
+        id: 11,
+        title: "Linen Blend Casual Shirt",
+        price: 2799,
+        originalPrice: 3499,
+        rating: 4.3,
+        reviews: 4123,
+        image: "https://images.unsplash.com/photo-1593030103066-0093718efeb9?w=500&h=600&fit=crop",
+        link: "#",
+        sizes: ["S", "M", "L", "XL"],
+        colors: ["White", "Beige", "Light Blue", "Olive"],
+        category: "Shirts",
+        season: "spring",
+        isNew: true,
+        stock: 38,
+        sold: 890,
+        freeShipping: true,
+        type: "shirts",
+        style: "casual"
+    },
+    {
+        id: 12,
+        title: "Performance Running Shorts",
+        price: 1299,
+        rating: 4.5,
+        reviews: 2345,
+        image: "https://images.unsplash.com/photo-1506629905607-e48b0e67d879?w=500&h=600&fit=crop",
+        link: "#",
+        sizes: ["S", "M", "L", "XL"],
+        colors: ["Black", "Gray", "Blue", "Red"],
+        category: "Bottoms",
+        season: "summer",
+        stock: 62,
+        sold: 1560,
+        freeShipping: true,
+        type: "bottoms",
+        style: "casual"
+    },
+    {
+        id: 13,
+        title: "Graphic Print T-Shirt - Urban Style",
+        price: 999,
+        originalPrice: 1499,
+        rating: 4.4,
+        reviews: 4567,
+        image: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=500&h=600&fit=crop",
+        link: "#",
+        sizes: ["S", "M", "L", "XL"],
+        colors: ["Black", "White", "Gray"],
+        category: "T-Shirts",
+        season: "all",
+        isTrending: true,
+        stock: 65,
+        sold: 3200,
+        freeShipping: true,
+        type: "t-shirts",
+        style: "casual"
+    },
+    {
+        id: 14,
+        title: "Waterproof Rain Jacket",
+        price: 5599,
+        originalPrice: 6999,
+        rating: 4.6,
+        reviews: 3124,
+        image: "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=500&h=600&fit=crop",
+        link: "#",
+        sizes: ["S", "M", "L", "XL"],
+        colors: ["Yellow", "Blue", "Black", "Green"],
+        category: "Outerwear",
+        season: "rainy",
+        stock: 15,
+        sold: 1230,
+        freeShipping: true,
+        type: "outerwear",
+        style: "casual"
+    },
+    {
+        id: 15,
+        title: "Casual Linen Shirt - Beige",
+        price: 2399,
+        rating: 4.3,
+        reviews: 1890,
+        image: "https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf?w=500&h=600&fit=crop",
+        link: "#",
+        sizes: ["S", "M", "L", "XL"],
+        colors: ["Beige", "White", "Blue"],
+        category: "Shirts",
+        season: "summer",
+        stock: 28,
+        sold: 890,
+        freeShipping: true,
+        type: "shirts",
+        style: "casual"
+    },
+    {
+        id: 16,
+        title: "Premium Cotton T-Shirt - Multipack",
+        price: 1999,
+        originalPrice: 2799,
+        rating: 4.7,
+        reviews: 3456,
+        image: "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=500&h=600&fit=crop",
+        link: "#",
+        sizes: ["S", "M", "L", "XL", "XXL"],
+        colors: ["Assorted Colors"],
+        category: "T-Shirts",
+        season: "all",
+        isBestseller: true,
+        stock: 58,
+        sold: 2780,
+        freeShipping: true,
+        type: "t-shirts",
+        style: "casual"
+    },
+    {
+        id: 17,
+        title: "Training Jogger Pants",
+        price: 2399,
+        originalPrice: 3199,
+        rating: 4.5,
+        reviews: 8345,
+        image: "https://images.unsplash.com/photo-1506629905607-e48b0e67d879?w=500&h=600&fit=crop",
+        link: "#",
+        sizes: ["S", "M", "L", "XL"],
+        colors: ["Black", "Gray", "Navy", "Green"],
+        category: "Bottoms",
+        season: "all",
+        stock: 42,
+        sold: 2780,
+        freeShipping: true,
+        type: "bottoms",
+        style: "casual"
+    },
+    {
+        id: 18,
+        title: "Business Casual Shirt - Checkered",
+        price: 2499,
+        originalPrice: 3199,
+        rating: 4.4,
+        reviews: 1789,
+        image: "https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=500&h=600&fit=crop",
+        link: "#",
+        sizes: ["S", "M", "L", "XL", "XXL"],
+        colors: ["Blue/White", "Red/White", "Green/White"],
+        category: "Shirts",
+        season: "all",
+        stock: 29,
+        sold: 760,
+        freeShipping: true,
+        type: "shirts",
+        style: "formal"
+    },
+    {
+        id: 19,
+        title: "Lightweight Hoodie - Spring Collection",
+        price: 2399,
+        rating: 4.4,
+        reviews: 1789,
+        image: "https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=500&h=600&fit=crop",
+        link: "#",
+        sizes: ["S", "M", "L", "XL"],
+        colors: ["Gray", "Navy", "Green", "Beige"],
+        category: "Outerwear",
+        season: "spring",
+        stock: 32,
+        sold: 780,
+        freeShipping: true,
+        type: "outerwear",
+        style: "casual"
+    },
+    {
+        id: 20,
+        title: "Classic Polo Shirt - Slim Fit",
+        price: 1799,
+        originalPrice: 2299,
+        rating: 4.6,
+        reviews: 2678,
+        image: "https://images.unsplash.com/photo-1586790170083-2f9ceadc732d?w=500&h=600&fit=crop",
+        link: "#",
+        sizes: ["S", "M", "L", "XL"],
+        colors: ["White", "Black", "Navy", "Red"],
+        category: "Polos",
+        season: "summer",
+        isBestseller: true,
+        stock: 41,
+        sold: 1560,
+        freeShipping: true,
+        type: "polos",
+        style: "casual"
+    },
+    {
+        id: 21,
+        title: "Insulated Winter Jacket",
+        price: 7399,
+        originalPrice: 9599,
+        rating: 4.8,
+        reviews: 4234,
+        image: "https://images.unsplash.com/photo-1551028719-00167b16eac5?w=500&h=600&fit=crop",
+        link: "#",
+        sizes: ["S", "M", "L", "XL"],
+        colors: ["Black", "Blue", "Red", "Green"],
+        category: "Outerwear",
+        season: "winter",
+        isBestseller: true,
+        stock: 18,
+        sold: 1560,
+        freeShipping: true,
+        type: "outerwear",
+        style: "casual"
+    },
+    {
+        id: 22,
+        title: "Striped Long Sleeve Shirt",
+        price: 2199,
+        rating: 4.2,
+        reviews: 1567,
+        image: "https://images.unsplash.com/photo-1594035910387-fea47794261f?w=500&h=600&fit=crop",
+        link: "#",
+        sizes: ["S", "M", "L", "XL"],
+        colors: ["Blue/White", "Black/White", "Red/White"],
+        category: "Shirts",
+        season: "all",
+        stock: 34,
+        sold: 670,
+        freeShipping: true,
+        type: "shirts",
+        style: "casual"
+    },
+    {
+        id: 23,
+        title: "Athletic Performance T-Shirt",
+        price: 1199,
+        originalPrice: 1599,
+        rating: 4.5,
+        reviews: 2345,
+        image: "https://images.unsplash.com/photo-1503341455253-b2e723bb3dbb?w=500&h=600&fit=crop",
+        link: "#",
+        sizes: ["S", "M", "L", "XL"],
+        colors: ["Black", "Gray", "Navy"],
+        category: "T-Shirts",
+        season: "summer",
+        stock: 52,
+        sold: 1890,
+        freeShipping: true,
+        type: "t-shirts",
+        style: "casual"
+    },
+    {
+        id: 24,
+        title: "V-Neck Cotton T-Shirt Pack",
+        price: 1499,
+        originalPrice: 1899,
+        rating: 4.6,
+        reviews: 9234,
+        image: "https://images.unsplash.com/photo-1503341455253-b2e723bb3dbb?w=500&h=600&fit=crop",
+        link: "#",
+        sizes: ["S", "M", "L", "XL", "XXL"],
+        colors: ["Black", "Gray", "Navy", "Green"],
+        category: "T-Shirts",
+        season: "summer",
+        stock: 54,
+        sold: 4560,
+        freeShipping: true,
+        type: "t-shirts",
+        style: "casual"
+    },
+    {
+        id: 25,
+        title: "Outdoor Adventure Long Sleeve Shirt",
+        price: 2599,
+        rating: 4.7,
+        reviews: 5234,
+        image: "https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=500&h=600&fit=crop",
+        link: "#",
+        sizes: ["S", "M", "L", "XL", "XXL"],
+        colors: ["Blue", "Green", "Gray", "Tan"],
+        category: "Shirts",
+        season: "summer",
+        stock: 31,
+        sold: 1890,
+        freeShipping: true,
+        type: "shirts",
+        style: "casual"
+    },
+    {
+        id: 26,
+        title: "Comfort Fit Crewneck Sweatshirt",
+        price: 1699,
+        originalPrice: 2199,
+        rating: 4.6,
+        reviews: 24567,
+        image: "https://images.unsplash.com/photo-1576566588028-4147f3842f27?w=500&h=600&fit=crop",
+        link: "#",
+        sizes: ["S", "M", "L", "XL", "XXL"],
+        colors: ["Black", "Gray", "Navy", "Red"],
+        category: "Outerwear",
+        season: "winter",
+        isBestseller: true,
+        stock: 67,
+        sold: 4560,
+        freeShipping: true,
+        type: "outerwear",
+        style: "casual"
+    },
+    {
+        id: 27,
+        title: "Athletic Fit Sport Polo",
+        price: 1999,
+        rating: 4.4,
+        reviews: 6123,
+        image: "https://images.unsplash.com/photo-1618354691373-d851c5c3a990?w=500&h=600&fit=crop",
+        link: "#",
+        sizes: ["S", "M", "L", "XL"],
+        colors: ["Black", "White", "Blue", "Green"],
+        category: "Polos",
+        season: "spring",
+        stock: 28,
+        sold: 1890,
+        freeShipping: true,
+        type: "polos",
+        style: "casual"
+    },
+    {
+        id: 28,
+        title: "Formal Business Shirt - French Cuff",
+        price: 2899,
+        originalPrice: 3799,
+        rating: 4.5,
+        reviews: 1234,
+        image: "https://images.unsplash.com/photo-1621072156002-e2fccdc0b176?w=500&h=600&fit=crop",
+        link: "#",
+        sizes: ["S", "M", "L", "XL"],
+        colors: ["White", "Blue", "Pink"],
+        category: "Shirts",
+        season: "all",
+        stock: 24,
+        sold: 560,
+        freeShipping: true,
+        type: "shirts",
+        style: "formal"
+    },
+    {
+        id: 29,
+        title: "Casual Short Sleeve Shirt",
+        price: 1599,
+        rating: 4.2,
+        reviews: 1456,
+        image: "https://images.unsplash.com/photo-1593030103066-0093718efeb9?w=500&h=600&fit=crop",
+        link: "#",
+        sizes: ["S", "M", "L", "XL"],
+        colors: ["Blue", "Green", "Yellow", "Pink"],
+        category: "Shirts",
+        season: "summer",
+        stock: 36,
+        sold: 890,
+        freeShipping: true,
+        type: "shirts",
+        style: "casual"
+    },
+    {
+        id: 30,
+        title: "Lightweight Windbreaker Jacket",
+        price: 2999,
+        originalPrice: 3999,
+        rating: 4.4,
+        reviews: 1567,
+        image: "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=500&h=600&fit=crop",
+        link: "#",
+        sizes: ["S", "M", "L", "XL"],
+        colors: ["Blue", "Red", "Black", "Green"],
+        category: "Outerwear",
+        season: "spring",
+        stock: 28,
+        sold: 670,
+        freeShipping: true,
+        type: "outerwear",
+        style: "casual"
+    },
+    {
+        id: 31,
+        title: "Premium Polo Shirt - Performance Fit",
+        price: 1999,
+        rating: 4.7,
+        reviews: 2678,
+        image: "https://images.unsplash.com/photo-1586790170083-2f9ceadc732d?w=500&h=600&fit=crop",
+        link: "#",
+        sizes: ["S", "M", "L", "XL"],
+        colors: ["Navy", "White", "Black", "Red"],
+        category: "Polos",
+        season: "all",
+        isBestseller: true,
+        stock: 39,
+        sold: 1450,
+        freeShipping: true,
+        type: "polos",
+        style: "casual"
+    },
+    {
+        id: 32,
+        title: "Classic Denim Shirt",
+        price: 2199,
+        originalPrice: 2899,
+        rating: 4.5,
+        reviews: 1890,
+        image: "https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=500&h=600&fit=crop",
+        link: "#",
+        sizes: ["S", "M", "L", "XL"],
+        colors: ["Blue", "Black"],
+        category: "Shirts",
+        season: "all",
+        stock: 34,
+        sold: 890,
+        freeShipping: true,
+        type: "shirts",
+        style: "casual"
+    },
+    {
+        id: 33,
+        title: "Casual Linen Blend Shirt",
+        price: 2699,
+        rating: 4.3,
+        reviews: 1234,
+        image: "https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf?w=500&h=600&fit=crop",
+        link: "#",
+        sizes: ["S", "M", "L", "XL"],
+        colors: ["White", "Beige", "Light Blue"],
+        category: "Shirts",
+        season: "summer",
+        stock: 26,
+        sold: 670,
+        freeShipping: true,
+        type: "shirts",
+        style: "casual"
+    },
+    {
+        id: 34,
+        title: "Performance Running T-Shirt",
+        price: 1399,
+        originalPrice: 1899,
+        rating: 4.6,
+        reviews: 2345,
+        image: "https://images.unsplash.com/photo-1503341455253-b2e723bb3dbb?w=500&h=600&fit=crop",
+        link: "#",
+        sizes: ["S", "M", "L", "XL"],
+        colors: ["Black", "Gray", "Blue", "Red"],
+        category: "T-Shirts",
+        season: "summer",
+        stock: 47,
+        sold: 1560,
+        freeShipping: true,
+        type: "t-shirts",
+        style: "casual"
+    },
+    {
+        id: 35,
+        title: "Business Shirt - Non-Iron",
+        price: 2499,
+        rating: 4.5,
+        reviews: 1678,
+        image: "https://images.unsplash.com/photo-1621072156002-e2fccdc0b176?w=500&h=600&fit=crop",
+        link: "#",
+        sizes: ["S", "M", "L", "XL"],
+        colors: ["White", "Blue", "Pink"],
+        category: "Shirts",
+        season: "all",
+        stock: 27,
+        sold: 890,
+        freeShipping: true,
+        type: "shirts",
+        style: "formal"
+    },
+    {
+        id: 36,
+        title: "Casual Button-Down Shirt - Plaid",
+        price: 1899,
+        rating: 4.3,
+        reviews: 1345,
+        image: "https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=500&h=600&fit=crop",
+        link: "#",
+        sizes: ["S", "M", "L", "XL"],
+        colors: ["Red/Black", "Blue/White", "Green/Black"],
+        category: "Shirts",
+        season: "autumn",
+        stock: 31,
+        sold: 780,
+        freeShipping: true,
+        type: "shirts",
+        style: "casual"
+    },
+    {
+        id: 37,
+        title: "Classic Fit T-Shirt - Organic Cotton",
+        price: 1299,
+        originalPrice: 1799,
+        rating: 4.6,
+        reviews: 2890,
+        image: "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=500&h=600&fit=crop",
+        link: "#",
+        sizes: ["S", "M", "L", "XL", "XXL"],
+        colors: ["White", "Black", "Gray", "Navy"],
+        category: "T-Shirts",
+        season: "all",
+        isBestseller: true,
+        stock: 63,
+        sold: 3450,
+        freeShipping: true,
+        type: "t-shirts",
+        style: "casual"
+    },
+    {
+        id: 38,
+        title: "Performance Polo - Moisture Wicking",
+        price: 2199,
+        originalPrice: 2899,
+        rating: 4.7,
+        reviews: 2345,
+        image: "https://images.unsplash.com/photo-1586790170083-2f9ceadc732d?w=500&h=600&fit=crop",
+        link: "#",
+        sizes: ["S", "M", "L", "XL"],
+        colors: ["Black", "Navy", "White", "Red"],
+        category: "Polos",
+        season: "summer",
+        stock: 35,
+        sold: 1230,
+        freeShipping: true,
+        type: "polos",
+        style: "casual"
+    },
+    {
+        id: 39,
+        title: "Lightweight Summer Shirt - Linen Blend",
+        price: 1999,
+        rating: 4.4,
+        reviews: 1456,
+        image: "https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf?w=500&h=600&fit=crop",
+        link: "#",
+        sizes: ["S", "M", "L", "XL"],
+        colors: ["White", "Beige", "Light Blue"],
+        category: "Shirts",
+        season: "summer",
+        stock: 29,
+        sold: 670,
+        freeShipping: true,
+        type: "shirts",
+        style: "casual"
+    },
+    {
+        id: 40,
+        title: "Classic Hooded Sweatshirt",
+        price: 2799,
+        originalPrice: 3599,
+        rating: 4.6,
+        reviews: 1890,
+        image: "https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=500&h=600&fit=crop",
+        link: "#",
+        sizes: ["S", "M", "L", "XL", "XXL"],
+        colors: ["Gray", "Black", "Navy", "Red"],
+        category: "Outerwear",
+        season: "winter",
+        isBestseller: true,
+        stock: 42,
+        sold: 1560,
+        freeShipping: true,
+        type: "outerwear",
+        style: "casual"
+    },
+    {
+        id: 41,
+        title: "Casual Short Sleeve Polo",
+        price: 1699,
+        rating: 4.3,
+        reviews: 1234,
+        image: "https://images.unsplash.com/photo-1586790170083-2f9ceadc732d?w=500&h=600&fit=crop",
+        link: "#",
+        sizes: ["S", "M", "L", "XL"],
+        colors: ["White", "Black", "Blue", "Green"],
+        category: "Polos",
+        season: "summer",
+        stock: 38,
+        sold: 890,
+        freeShipping: true,
+        type: "polos",
+        style: "casual"
+    },
+    {
+        id: 42,
+        title: "Formal Dress Shirt - Twill",
+        price: 2299,
+        originalPrice: 2999,
+        rating: 4.5,
+        reviews: 1567,
+        image: "https://images.unsplash.com/photo-1621072156002-e2fccdc0b176?w=500&h=600&fit=crop",
+        link: "#",
+        sizes: ["S", "M", "L", "XL"],
+        colors: ["White", "Blue", "Pink"],
+        category: "Shirts",
+        season: "all",
+        stock: 26,
+        sold: 780,
+        freeShipping: true,
+        type: "shirts",
+        style: "formal"
+    },
+    {
+        id: 43,
+        title: "Graphic T-Shirt - Limited Edition",
+        price: 1499,
+        rating: 4.4,
+        reviews: 2345,
+        image: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=500&h=600&fit=crop",
+        link: "#",
+        sizes: ["S", "M", "L", "XL"],
+        colors: ["Black", "White", "Gray"],
+        category: "T-Shirts",
+        season: "all",
+        isTrending: true,
+        stock: 45,
+        sold: 1890,
+        freeShipping: true,
+        type: "t-shirts",
+        style: "casual"
+    },
+    {
+        id: 44,
+        title: "Performance Long Sleeve Shirt",
+        price: 2399,
+        originalPrice: 3199,
+        rating: 4.6,
+        reviews: 1789,
+        image: "https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=500&h=600&fit=crop",
+        link: "#",
+        sizes: ["S", "M", "L", "XL"],
+        colors: ["Black", "Navy", "Gray", "Green"],
+        category: "Shirts",
+        season: "winter",
+        stock: 32,
+        sold: 890,
+        freeShipping: true,
+        type: "shirts",
+        style: "casual"
+    },
+    {
+        id: 45,
+        title: "Classic Polo Shirt - Pique Cotton",
+        price: 1899,
+        rating: 4.5,
+        reviews: 2678,
+        image: "https://images.unsplash.com/photo-1586790170083-2f9ceadc732d?w=500&h=600&fit=crop",
+        link: "#",
+        sizes: ["S", "M", "L", "XL"],
+        colors: ["White", "Black", "Navy", "Red"],
+        category: "Polos",
+        season: "all",
+        isBestseller: true,
+        stock: 41,
+        sold: 1560,
+        freeShipping: true,
+        type: "polos",
+        style: "casual"
+    },
+    {
+        id: 46,
+        title: "Lightweight Jacket - Water Resistant",
+        price: 3499,
+        originalPrice: 4599,
+        rating: 4.4,
+        reviews: 1345,
+        image: "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=500&h=600&fit=crop",
+        link: "#",
+        sizes: ["S", "M", "L", "XL"],
+        colors: ["Blue", "Black", "Green", "Red"],
+        category: "Outerwear",
+        season: "rainy",
+        stock: 23,
+        sold: 560,
+        freeShipping: true,
+        type: "outerwear",
+        style: "casual"
+    },
+    {
+        id: 47,
+        title: "Casual Linen Shirt - Relaxed Fit",
+        price: 2199,
+        rating: 4.3,
+        reviews: 1234,
+        image: "https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf?w=500&h=600&fit=crop",
+        link: "#",
+        sizes: ["S", "M", "L", "XL"],
+        colors: ["White", "Beige", "Light Blue"],
+        category: "Shirts",
+        season: "summer",
+        stock: 28,
+        sold: 670,
+        freeShipping: true,
+        type: "shirts",
+        style: "casual"
+    },
+    {
+        id: 48,
+        title: "Performance T-Shirt - Quick Dry",
+        price: 1599,
+        originalPrice: 2199,
+        rating: 4.7,
+        reviews: 2890,
+        image: "https://images.unsplash.com/photo-1503341455253-b2e723bb3dbb?w=500&h=600&fit=crop",
+        link: "#",
+        sizes: ["S", "M", "L", "XL"],
+        colors: ["Black", "Gray", "Navy", "Red"],
+        category: "T-Shirts",
+        season: "summer",
+        stock: 52,
+        sold: 2340,
+        freeShipping: true,
+        type: "t-shirts",
+        style: "casual"
+    },
+    {
+        id: 49,
+        title: "Business Casual Shirt - Striped",
+        price: 2399,
+        rating: 4.4,
+        reviews: 1567,
+        image: "https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=500&h=600&fit=crop",
+        link: "#",
+        sizes: ["S", "M", "L", "XL"],
+        colors: ["Blue/White", "Pink/White", "Green/White"],
+        category: "Shirts",
+        season: "all",
+        stock: 31,
+        sold: 780,
+        freeShipping: true,
+        type: "shirts",
+        style: "formal"
+    },
+    {
+        id: 50,
+        title: "Premium Wool Blend Cardigan",
+        price: 4299,
+        originalPrice: 5499,
+        rating: 4.6,
+        reviews: 1890,
+        image: "https://images.unsplash.com/photo-1434389677669-e08b4cac3105?w=500&h=600&fit=crop",
+        link: "#",
+        sizes: ["S", "M", "L", "XL"],
+        colors: ["Navy", "Gray", "Black", "Camel"],
+        category: "Outerwear",
+        season: "autumn",
+        stock: 19,
+        sold: 890,
+        freeShipping: true,
+        type: "outerwear",
+        style: "casual"
+    }
+];
+        // Cart functionality
+        let cart = [];
+        let wishlist = [];
+        let displayedProducts = 12; // Initial number of products to display
+        let currentSort = 'featured';
+        let currentSeason = 'all';
+        let currentType = 'all';
+        let currentPriceRange = 'all';
+        let currentSpecial = '';
+        let currentFilters = {
+            price: { min: 0, max: 10000 },
+            colors: [],
+            sizes: [],
+            ratings: [3, 4, 5],
+            types: [],
+            styles: []
+        };
+
+        const cartButton = document.getElementById('cart-button');
+        const cartSidebar = document.getElementById('cart-sidebar');
+        const cartOverlay = document.getElementById('cart-overlay');
+        const closeCart = document.getElementById('close-cart');
+        const cartItems = document.getElementById('cart-items');
+        const cartCount = document.getElementById('cart-count');
+        const cartTotalAmount = document.getElementById('cart-total-amount');
+        const productGrid = document.getElementById('product-grid');
+        const notification = document.getElementById('notification');
+        const notificationText = document.getElementById('notification-text');
+        const wishlistButton = document.getElementById('wishlist-button');
+        const wishlistSidebar = document.getElementById('wishlist-sidebar');
+        const closeWishlist = document.getElementById('close-wishlist');
+        const wishlistItems = document.getElementById('wishlist-items');
+        const wishlistCount = document.getElementById('wishlist-count');
+        const loadMoreButton = document.getElementById('load-more');
+        const applyFiltersButton = document.getElementById('apply-filters');
+        const applyPriceFilterButton = document.getElementById('apply-price-filter');
+        const checkoutButton = document.getElementById('checkout-button');
+        const mainContent = document.getElementById('main-content');
+        const checkoutContainer = document.getElementById('checkout-container');
+        const backToShopping = document.getElementById('back-to-shopping');
+        const homeLink = document.getElementById('home-link');
+
+        // Initialize the product grid
+        function initializeProductGrid() {
+            productGrid.innerHTML = '';
+            const filteredProducts = filterProducts(products);
+            const sortedProducts = sortProducts(filteredProducts);
+            const productsToShow = sortedProducts.slice(0, displayedProducts);
+            
+            productsToShow.forEach(product => {
+                const productCard = createProductCard(product);
+                productGrid.appendChild(productCard);
+            });
+            
+            // Show/hide load more button
+            if (displayedProducts >= filteredProducts.length) {
+                loadMoreButton.style.display = 'none';
+            } else {
+                loadMoreButton.style.display = 'block';
+            }
+            
+            attachProductEventListeners();
+        }
+
+        // Create product card HTML
+        function createProductCard(product) {
+            const productCard = document.createElement('div');
+            productCard.className = 'col-md-6 col-lg-4 mb-4';
+            productCard.innerHTML = `
+                <div class="product-card-wrapper">
+                    <div class="product-card">
+                        ${product.isBestseller ? '<span class="product-badge">Bestseller</span>' : ''}
+                        ${product.isNew ? '<span class="product-badge">New</span>' : ''}
+                        ${product.isTrending ? '<span class="product-badge">Trending</span>' : ''}
+                        ${product.originalPrice ? `<span class="discount-badge">${Math.round((1 - product.price / product.originalPrice) * 100)}% OFF</span>` : ''}
+                        
+                        <button class="wishlist-btn" data-id="${product.id}">
+                            <i class="${wishlist.find(item => item.id === product.id) ? 'fas' : 'far'} fa-heart"></i>
+                        </button>
+                        <button class="compare-btn" data-id="${product.id}">
+                            <i class="fas fa-balance-scale"></i>
+                        </button>
+                        <button class="quick-view-btn" data-id="${product.id}">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                        
+                        <img src="${product.image}" class="product-img" alt="${product.title}">
+                        
+                        <div class="product-meta">
+                            <span class="product-category">${product.category}</span>
+                            <span class="product-season">${product.season.charAt(0).toUpperCase() + product.season.slice(1)}</span>
+                        </div>
+                        
+                        <h5 class="product-title">${product.title}</h5>
+                        
+                        <div class="product-stats">
+                            <div class="product-rating">
+                                ${generateStarRating(product.rating)}
+                                <span class="ms-1">(${product.reviews.toLocaleString()})</span>
+                            </div>
+                            <div class="product-sold">
+                                <i class="fas fa-shopping-bag"></i> ${product.sold.toLocaleString()}+ sold
+                            </div>
+                        </div>
+                        
+                        ${product.freeShipping ? '<div class="product-shipping"><i class="fas fa-shipping-fast"></i> Free Shipping</div>' : ''}
+                        
+                        <div class="d-flex align-items-center mb-2">
+                            ${product.originalPrice ? `<span class="original-price">₹${product.originalPrice.toLocaleString()}</span>` : ''}
+                            <div class="product-price ${product.originalPrice ? 'sale-price' : ''}">₹${product.price.toLocaleString()}</div>
+                        </div>
+                        
+                        <div class="stock-status ${product.stock > 10 ? 'in-stock' : product.stock > 0 ? 'low-stock' : 'out-of-stock'}">
+                            ${product.stock > 10 ? 'In Stock' : product.stock > 0 ? `Only ${product.stock} left` : 'Out of Stock'}
+                        </div>
+                        
+                        <div class="size-selector">
+                            ${product.sizes.map(size => `<div class="size-option" data-size="${size}">${size}</div>`).join('')}
+                        </div>
+                        
+                        <div class="product-actions">
+                            <button class="btn btn-outline-modern flex-grow-1 view-details" data-id="${product.id}">
+                                <i class="fas fa-eye"></i> Details
+                            </button>
+                            <button class="btn btn-modern add-to-cart" data-id="${product.id}" ${product.stock === 0 ? 'disabled' : ''}>
+                                <i class="fas fa-cart-plus"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            return productCard;
+        }
+
+        // Filter products based on current filters
+        function filterProducts(products) {
+            return products.filter(product => {
+                // Season filter
+                if (currentSeason !== 'all' && product.season !== currentSeason && product.season !== 'all') {
+                    return false;
+                }
+                
+                // Product type filter
+                if (currentType !== 'all') {
+                    if (currentType === 'casual' || currentType === 'formal') {
+                        if (product.style !== currentType) {
+                            return false;
+                        }
+                    } else if (product.type !== currentType) {
+                        return false;
+                    }
+                }
+                
+                // Price range filter
+                if (currentPriceRange !== 'all') {
+                    switch(currentPriceRange) {
+                        case 'under-1000':
+                            if (product.price >= 1000) return false;
+                            break;
+                        case '1000-2000':
+                            if (product.price < 1000 || product.price > 2000) return false;
+                            break;
+                        case '2000-5000':
+                            if (product.price < 2000 || product.price > 5000) return false;
+                            break;
+                        case 'over-5000':
+                            if (product.price <= 5000) return false;
+                            break;
+                    }
+                }
+                
+                // Special filter
+                if (currentSpecial !== '') {
+                    switch(currentSpecial) {
+                        case 'bestsellers':
+                            if (!product.isBestseller) return false;
+                            break;
+                        case 'new-arrivals':
+                            if (!product.isNew) return false;
+                            break;
+                        case 'discounted':
+                            if (!product.originalPrice) return false;
+                            break;
+                        case 'trending':
+                            if (!product.isTrending) return false;
+                            break;
+                    }
+                }
+                
+                // Price filter
+                if (product.price < currentFilters.price.min || product.price > currentFilters.price.max) {
+                    return false;
+                }
+                
+                // Color filter
+                if (currentFilters.colors.length > 0) {
+                    const hasMatchingColor = product.colors.some(color => 
+                        currentFilters.colors.includes(color.toLowerCase())
+                    );
+                    if (!hasMatchingColor) return false;
+                }
+                
+                // Size filter
+                if (currentFilters.sizes.length > 0) {
+                    const hasMatchingSize = product.sizes.some(size => 
+                        currentFilters.sizes.includes(size)
+                    );
+                    if (!hasMatchingSize) return false;
+                }
+                
+                // Rating filter
+                if (currentFilters.ratings.length > 0) {
+                    const hasMatchingRating = currentFilters.ratings.some(rating => 
+                        product.rating >= rating
+                    );
+                    if (!hasMatchingRating) return false;
+                }
+                
+                return true;
+            });
+        }
+
+        // Sort products based on current sort
+        function sortProducts(products) {
+            switch(currentSort) {
+                case 'price-low':
+                    return [...products].sort((a, b) => a.price - b.price);
+                case 'price-high':
+                    return [...products].sort((a, b) => b.price - a.price);
+                case 'rating':
+                    return [...products].sort((a, b) => b.rating - a.rating);
+                case 'newest':
+                    return [...products].sort((a, b) => (b.isNew ? 1 : 0) - (a.isNew ? 1 : 0));
+                default: // featured
+                    return [...products].sort((a, b) => (b.isBestseller ? 1 : 0) - (a.isBestseller ? 1 : 0));
+            }
+        }
+
+        // Generate star rating HTML
+        function generateStarRating(rating) {
+            let stars = '';
+            for (let i = 1; i <= 5; i++) {
+                if (i <= Math.floor(rating)) {
+                    stars += '<i class="fas fa-star"></i>';
+                } else if (i === Math.ceil(rating) && !Number.isInteger(rating)) {
+                    stars += '<i class="fas fa-star-half-alt"></i>';
+                } else {
+                    stars += '<i class="far fa-star"></i>';
+                }
+            }
+            return stars;
+        }
+
+        // Add product to cart
+        function addToCart(product, size) {
+            const existingItem = cart.find(item => item.id === product.id && item.size === size);
+            
+            if (existingItem) {
+                existingItem.quantity += 1;
+            } else {
+                cart.push({
+                    id: product.id,
+                    title: product.title,
+                    price: product.price,
+                    image: product.image,
+                    size: size,
+                    quantity: 1
+                });
+            }
+            
+            updateCart();
+        }
+
+        // Update cart UI
+        function updateCart() {
+            cartCount.textContent = cart.reduce((total, item) => total + item.quantity, 0);
+            
+            cartItems.innerHTML = '';
+            let total = 0;
+            
+            cart.forEach(item => {
+                const itemTotal = item.price * item.quantity;
+                total += itemTotal;
+                
+                const cartItem = document.createElement('div');
+                cartItem.className = 'cart-item';
+                cartItem.innerHTML = `
+                    <img src="${item.image}" class="cart-item-img" alt="${item.title}">
+                    <div class="cart-item-details">
+                        <div class="cart-item-title">${item.title}</div>
+                        <div class="cart-item-size">Size: ${item.size}</div>
+                        <div class="cart-item-price">₹${item.price.toLocaleString()} x ${item.quantity}</div>
+                    </div>
+                    <button class="cart-item-remove" data-id="${item.id}" data-size="${item.size}">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                `;
+                cartItems.appendChild(cartItem);
+            });
+            
+            cartTotalAmount.textContent = total.toLocaleString();
+            
+            // Add event listeners for remove buttons
+            document.querySelectorAll('.cart-item-remove').forEach(button => {
+                button.addEventListener('click', function() {
+                    const id = parseInt(this.getAttribute('data-id'));
+                    const size = this.getAttribute('data-size');
+                    removeFromCart(id, size);
+                });
+            });
+        }
+
+        // Remove product from cart
+        function removeFromCart(id, size) {
+            cart = cart.filter(item => !(item.id === id && item.size === size));
+            updateCart();
+        }
+
+        // Add product to wishlist
+        function addToWishlist(product) {
+            const existingItem = wishlist.find(item => item.id === product.id);
+            
+            if (!existingItem) {
+                wishlist.push({
+                    id: product.id,
+                    title: product.title,
+                    price: product.price,
+                    image: product.image
+                });
+            }
+            
+            updateWishlist();
+        }
+
+        // Remove product from wishlist
+        function removeFromWishlist(id) {
+            wishlist = wishlist.filter(item => item.id !== id);
+            updateWishlist();
+        }
+
+        // Update wishlist UI
+        function updateWishlist() {
+            wishlistCount.textContent = wishlist.length;
+            
+            wishlistItems.innerHTML = '';
+            
+            wishlist.forEach(item => {
+                const wishlistItem = document.createElement('div');
+                wishlistItem.className = 'cart-item';
+                wishlistItem.innerHTML = `
+                    <img src="${item.image}" class="cart-item-img" alt="${item.title}">
+                    <div class="cart-item-details">
+                        <div class="cart-item-title">${item.title}</div>
+                        <div class="cart-item-price">₹${item.price.toLocaleString()}</div>
+                    </div>
+                    <div class="d-flex flex-column gap-2">
+                        <button class="btn btn-modern add-to-cart-from-wishlist" data-id="${item.id}">
+                            <i class="fas fa-cart-plus"></i>
+                        </button>
+                        <button class="btn btn-outline-modern remove-from-wishlist" data-id="${item.id}">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                `;
+                wishlistItems.appendChild(wishlistItem);
+            });
+            
+            // Add event listeners for wishlist buttons
+            document.querySelectorAll('.remove-from-wishlist').forEach(button => {
+                button.addEventListener('click', function() {
+                    const id = parseInt(this.getAttribute('data-id'));
+                    removeFromWishlist(id);
+                    updateProductWishlistButtons();
+                    showNotification('Product removed from wishlist');
+                });
+            });
+            
+            document.querySelectorAll('.add-to-cart-from-wishlist').forEach(button => {
+                button.addEventListener('click', function() {
+                    const id = parseInt(this.getAttribute('data-id'));
+                    const product = products.find(p => p.id === id);
+                    addToCart(product, product.sizes[0]);
+                    showNotification(`${product.title} added to cart`);
+                });
+            });
+        }
+
+        // Update wishlist buttons on product cards
+        function updateProductWishlistButtons() {
+            document.querySelectorAll('.wishlist-btn').forEach(button => {
+                const productId = parseInt(button.getAttribute('data-id'));
+                const icon = button.querySelector('i');
+                
+                if (wishlist.find(item => item.id === productId)) {
+                    icon.className = 'fas fa-heart';
+                    button.classList.add('active');
+                } else {
+                    icon.className = 'far fa-heart';
+                    button.classList.remove('active');
+                }
+            });
+        }
+
+        // Show notification
+        function showNotification(message) {
+            notificationText.textContent = message;
+            notification.classList.add('show');
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+
+        // Initialize checkout page
+        function initializeCheckoutPage() {
+            const checkoutOrderItems = document.getElementById('checkout-order-items');
+            const checkoutSubtotal = document.getElementById('checkout-subtotal');
+            const checkoutShipping = document.getElementById('checkout-shipping');
+            const checkoutTax = document.getElementById('checkout-tax');
+            const checkoutFinalTotal = document.getElementById('checkout-final-total');
+            const checkoutTotalAmount = document.getElementById('checkout-total-amount');
+            
+            checkoutOrderItems.innerHTML = '';
+            let subtotal = 0;
+            
+            cart.forEach(item => {
+                const itemTotal = item.price * item.quantity;
+                subtotal += itemTotal;
+                
+                const orderItem = document.createElement('div');
+                orderItem.className = 'order-item';
+                orderItem.innerHTML = `
+                    <div class="item-image">
+                        <img src="${item.image}" alt="${item.title}">
+                    </div>
+                    <div class="item-details">
+                        <div class="item-name">${item.title}</div>
+                        <div class="item-meta">Size: ${item.size} · Color: Black · Qty: ${item.quantity}</div>
+                        <div class="item-price">₹${itemTotal.toLocaleString()}</div>
+                    </div>
+                `;
+                checkoutOrderItems.appendChild(orderItem);
+            });
+            
+            const shipping = subtotal > 0 ? 0 : 0; // Free shipping
+            const tax = subtotal * 0.18; // 18% tax
+            const total = subtotal + shipping + tax;
+            
+            checkoutSubtotal.textContent = subtotal.toLocaleString();
+            checkoutShipping.textContent = shipping.toLocaleString();
+            checkoutTax.textContent = tax.toLocaleString();
+            checkoutFinalTotal.textContent = total.toLocaleString();
+            checkoutTotalAmount.textContent = total.toLocaleString();
+        }
+
+        // Show checkout page
+        function showCheckoutPage() {
+            if (cart.length === 0) {
+                showNotification('Your cart is empty');
+                return;
+            }
+            
+            mainContent.style.display = 'none';
+            checkoutContainer.style.display = 'block';
+            initializeCheckoutPage();
+            
+            // Close cart sidebar if open
+            cartSidebar.classList.remove('open');
+            cartOverlay.classList.remove('show');
+        }
+
+        // Show main shopping page
+        function showMainPage() {
+            mainContent.style.display = 'block';
+            checkoutContainer.style.display = 'none';
+        }
+
+        // Camera functionality
+        const video = document.getElementById('camera-feed');
+        const canvas = document.getElementById('canvas');
+        const snapButton = document.getElementById('snap-photo');
+        const startButton = document.getElementById('start-camera');
+        const cameraForm = document.getElementById('camera-form');
+        const hiddenInput = document.getElementById('image-data');
+        const uploadForm = document.getElementById('upload-form');
+        const loadingSpinner = document.getElementById('loading-spinner');
+        const resultsSection = document.getElementById('results-section');
+
+        // Show loading spinner when form is submitted
+        if (uploadForm) {
+            uploadForm.addEventListener('submit', function() {
+                loadingSpinner.style.display = 'block';
+                resultsSection.style.display = 'none';
+            });
+        }
+
+        // Show results section when page loads with results
+        window.addEventListener('load', function() {
+            {% if results %}
+                resultsSection.style.display = 'block';
+                initializeProductGrid();
+            {% endif %}
+        });
+
+        // Cart sidebar functionality
+        cartButton.addEventListener('click', function() {
+            cartSidebar.classList.add('open');
+            cartOverlay.classList.add('show');
+        });
+
+        closeCart.addEventListener('click', function() {
+            cartSidebar.classList.remove('open');
+            cartOverlay.classList.remove('show');
+        });
+
+        cartOverlay.addEventListener('click', function() {
+            cartSidebar.classList.remove('open');
+            cartOverlay.classList.remove('show');
+        });
+
+        // Wishlist sidebar functionality
+        wishlistButton.addEventListener('click', function() {
+            wishlistSidebar.classList.add('open');
+            cartOverlay.classList.add('show');
+        });
+
+        closeWishlist.addEventListener('click', function() {
+            wishlistSidebar.classList.remove('open');
+            cartOverlay.classList.remove('show');
+        });
+
+        // Checkout button
+        checkoutButton.addEventListener('click', showCheckoutPage);
+
+        // Back to shopping button
+        backToShopping.addEventListener('click', showMainPage);
+
+        // Home link
+        homeLink.addEventListener('click', function(e) {
+            e.preventDefault();
+            showMainPage();
+        });
+
+        // Move all wishlist items to cart
+        document.getElementById('move-all-to-cart').addEventListener('click', function() {
+            if (wishlist.length === 0) {
+                showNotification('Your wishlist is empty');
+                return;
+            }
+            
+            wishlist.forEach(item => {
+                const product = products.find(p => p.id === item.id);
+                addToCart(product, product.sizes[0]);
+            });
+            
+            showNotification('All wishlist items moved to cart');
+        });
+
+        // Load more products
+        loadMoreButton.addEventListener('click', function() {
+            displayedProducts += 12;
+            initializeProductGrid();
+        });
+
+        // Seasonal filters
+        document.querySelectorAll('.seasonal-option').forEach(option => {
+            option.addEventListener('click', function() {
+                document.querySelectorAll('.seasonal-option').forEach(opt => opt.classList.remove('active'));
+                this.classList.add('active');
+                
+                currentSeason = this.getAttribute('data-season');
+                displayedProducts = 12;
+                initializeProductGrid();
+                showNotification(`Showing ${currentSeason === 'all' ? 'all' : currentSeason} season products`);
+            });
+        });
+
+        // Product type filters
+        document.querySelectorAll('.filter-option[data-type]').forEach(option => {
+            option.addEventListener('click', function() {
+                if (this.getAttribute('data-type') === 'all') {
+                    document.querySelectorAll('.filter-option[data-type]').forEach(opt => opt.classList.remove('active'));
+                    this.classList.add('active');
+                    currentType = 'all';
+                } else {
+                    document.querySelector('.filter-option[data-type="all"]').classList.remove('active');
+                    this.classList.toggle('active');
+                    
+                    const type = this.getAttribute('data-type');
+                    if (this.classList.contains('active')) {
+                        currentType = type;
+                    } else {
+                        currentType = 'all';
+                        document.querySelector('.filter-option[data-type="all"]').classList.add('active');
+                    }
+                }
+                
+                displayedProducts = 12;
+                initializeProductGrid();
+                showNotification(`Showing ${currentType === 'all' ? 'all' : currentType} products`);
+            });
+        });
+
+        // Price range filters
+        document.querySelectorAll('.filter-option[data-price]').forEach(option => {
+            option.addEventListener('click', function() {
+                document.querySelectorAll('.filter-option[data-price]').forEach(opt => opt.classList.remove('active'));
+                this.classList.add('active');
+                
+                currentPriceRange = this.getAttribute('data-price');
+                displayedProducts = 12;
+                initializeProductGrid();
+                
+                let message = 'Showing all prices';
+                switch(currentPriceRange) {
+                    case 'under-1000':
+                        message = 'Showing products under ₹1000';
+                        break;
+                    case '1000-2000':
+                        message = 'Showing products between ₹1000-₹2000';
+                        break;
+                    case '2000-5000':
+                        message = 'Showing products between ₹2000-₹5000';
+                        break;
+                    case 'over-5000':
+                        message = 'Showing products over ₹5000';
+                        break;
+                }
+                showNotification(message);
+            });
+        });
+
+        // Special filters
+        document.querySelectorAll('.filter-option[data-special]').forEach(option => {
+            option.addEventListener('click', function() {
+                document.querySelectorAll('.filter-option[data-special]').forEach(opt => opt.classList.remove('active'));
+                this.classList.add('active');
+                
+                currentSpecial = this.getAttribute('data-special');
+                displayedProducts = 12;
+                initializeProductGrid();
+                
+                let message = '';
+                switch(currentSpecial) {
+                    case 'bestsellers':
+                        message = 'Showing best sellers';
+                        break;
+                    case 'new-arrivals':
+                        message = 'Showing new arrivals';
+                        break;
+                    case 'discounted':
+                        message = 'Showing discounted products';
+                        break;
+                    case 'trending':
+                        message = 'Showing trending products';
+                        break;
+                }
+                showNotification(message);
+            });
+        });
+
+        // Color filters
+        document.querySelectorAll('.color-filter-option').forEach(option => {
+            option.addEventListener('click', function() {
+                this.classList.toggle('active');
+                
+                const color = this.getAttribute('data-color');
+                if (this.classList.contains('active')) {
+                    if (!currentFilters.colors.includes(color)) {
+                        currentFilters.colors.push(color);
+                    }
+                } else {
+                    currentFilters.colors = currentFilters.colors.filter(c => c !== color);
+                }
+            });
+        });
+
+        // Size filters
+        document.querySelectorAll('.filter-option').forEach(option => {
+            option.addEventListener('click', function() {
+                if (this.textContent === 'All') {
+                    document.querySelectorAll('.filter-option').forEach(opt => {
+                        if (opt.textContent !== 'All') opt.classList.remove('active');
+                    });
+                    this.classList.add('active');
+                    currentFilters.sizes = [];
+                } else {
+                    document.querySelector('.filter-option').classList.remove('active'); // Remove "All" active
+                    this.classList.toggle('active');
+                    
+                    const size = this.textContent;
+                    if (this.classList.contains('active')) {
+                        if (!currentFilters.sizes.includes(size)) {
+                            currentFilters.sizes.push(size);
+                        }
+                    } else {
+                        currentFilters.sizes = currentFilters.sizes.filter(s => s !== size);
+                    }
+                    
+                    // If no sizes selected, activate "All"
+                    if (currentFilters.sizes.length === 0) {
+                        document.querySelector('.filter-option').classList.add('active');
+                    }
+                }
+            });
+        });
+
+        // Rating filters
+        document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+            checkbox.addEventListener('change', function() {
+                const rating = parseInt(this.id.split('-')[1]);
+                
+                if (this.checked) {
+                    if (!currentFilters.ratings.includes(rating)) {
+                        currentFilters.ratings.push(rating);
+                    }
+                } else {
+                    currentFilters.ratings = currentFilters.ratings.filter(r => r !== rating);
+                }
+            });
+        });
+
+        // Price filter
+        applyPriceFilterButton.addEventListener('click', function() {
+            const minPrice = parseFloat(document.getElementById('min-price').value) || 0;
+            const maxPrice = parseFloat(document.getElementById('max-price').value) || 10000;
+            
+            currentFilters.price = { min: minPrice, max: maxPrice };
+            displayedProducts = 12;
+            initializeProductGrid();
+            showNotification(`Filtering by price: ₹${minPrice} - ₹${maxPrice}`);
+        });
+
+        // Apply all filters
+        applyFiltersButton.addEventListener('click', function() {
+            displayedProducts = 12;
+            initializeProductGrid();
+            showNotification('Filters applied');
+        });
+
+        // Sort options
+        document.querySelectorAll('.dropdown-item[data-sort]').forEach(item => {
+            item.addEventListener('click', function(e) {
+                e.preventDefault();
+                currentSort = this.getAttribute('data-sort');
+                displayedProducts = 12;
+                initializeProductGrid();
+                showNotification(`Sorted by: ${this.textContent}`);
+            });
+        });
+
+        // View mode toggle
+        document.getElementById('list-view').addEventListener('change', function() {
+            if (this.checked) {
+                productGrid.classList.add('list-view');
+                document.querySelectorAll('.product-card').forEach(card => {
+                    card.style.flexDirection = 'row';
+                    card.querySelector('.product-img').style.width = '150px';
+                    card.querySelector('.product-img').style.height = '150px';
+                });
+            }
+        });
+
+        document.getElementById('grid-view').addEventListener('change', function() {
+            if (this.checked) {
+                productGrid.classList.remove('list-view');
+                document.querySelectorAll('.product-card').forEach(card => {
+                    card.style.flexDirection = 'column';
+                    card.querySelector('.product-img').style.width = '100%';
+                    card.querySelector('.product-img').style.height = '200px';
+                });
+            }
+        });
+
+        startButton.addEventListener('click', async () => {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+                video.srcObject = stream;
+                startButton.classList.add('d-none');
+            } catch (err) {
+                console.error("Error accessing camera: ", err);
+                alert('Could not access the camera. Please ensure you have given permission.');
+            }
+        });
+
+        snapButton.addEventListener('click', () => {
+            // Set canvas dimensions to match video
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+
+            // Draw current video frame to canvas
+            const context = canvas.getContext('2d');
+            context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+            // Convert canvas image to base64 JPEG
+            const dataURL = canvas.toDataURL('image/jpeg');
+
+            // Set the value of the hidden input
+            hiddenInput.value = dataURL;
+
+            // Show loading spinner
+            loadingSpinner.style.display = 'block';
+            resultsSection.style.display = 'none';
+
+            // Submit the form
+            cameraForm.submit();
+        });
+
+        // Attach event listeners to product cards
+        function attachProductEventListeners() {
+            // Add event listeners for size selection
+            document.querySelectorAll('.size-option').forEach(option => {
+                option.addEventListener('click', function() {
+                    this.parentElement.querySelectorAll('.size-option').forEach(opt => opt.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
+
+            // Add event listeners for add to cart buttons
+            document.querySelectorAll('.add-to-cart').forEach(button => {
+                button.addEventListener('click', function() {
+                    const productId = parseInt(this.getAttribute('data-id'));
+                    const product = products.find(p => p.id === productId);
+                    const sizeElement = this.closest('.product-card').querySelector('.size-option.active');
+                    
+                    if (!sizeElement) {
+                        showNotification('Please select a size first');
+                        return;
+                    }
+                    
+                    const size = sizeElement.getAttribute('data-size');
+                    addToCart(product, size);
+                    showNotification(`${product.title} (Size: ${size}) added to cart`);
+                });
+            });
+
+            // Add event listeners for view details buttons
+            document.querySelectorAll('.view-details').forEach(button => {
+                button.addEventListener('click', function() {
+                    const productId = parseInt(this.getAttribute('data-id'));
+                    const product = products.find(p => p.id === productId);
+                    window.open(product.link, '_blank');
+                });
+            });
+
+            // Add event listeners for quick view buttons
+            document.querySelectorAll('.quick-view-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const productId = parseInt(this.getAttribute('data-id'));
+                    const product = products.find(p => p.id === productId);
+                    // In a real application, this would open a modal with product details
+                    showNotification(`Quick view: ${product.title}`);
+                });
+            });
+
+            // Add event listeners for wishlist buttons
+            document.querySelectorAll('.wishlist-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const productId = parseInt(this.getAttribute('data-id'));
+                    const product = products.find(p => p.id === productId);
+                    const icon = this.querySelector('i');
+                    
+                    if (wishlist.find(item => item.id === productId)) {
+                        removeFromWishlist(productId);
+                        icon.className = 'far fa-heart';
+                        this.classList.remove('active');
+                        showNotification(`${product.title} removed from wishlist`);
+                    } else {
+                        addToWishlist(product);
+                        icon.className = 'fas fa-heart';
+                        this.classList.add('active');
+                        showNotification(`${product.title} added to wishlist`);
+                    }
+                });
+            });
+
+            // Add event listeners for compare buttons
+            document.querySelectorAll('.compare-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const productId = parseInt(this.getAttribute('data-id'));
+                    const product = products.find(p => p.id === productId);
+                    
+                    this.classList.toggle('active');
+                    if (this.classList.contains('active')) {
+                        showNotification(`${product.title} added to compare`);
+                    } else {
+                        showNotification(`${product.title} removed from compare`);
+                    }
+                });
+            });
+        }
+
+        // Initialize the product grid if results are already shown
+        if (document.querySelector('.results-section').style.display !== 'none') {
+            initializeProductGrid();
+        }
+
+        // Checkout payment functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            // Payment method selection
+            const paymentMethods = document.querySelectorAll('.payment-method');
+            const cardDetails = document.getElementById('card-details');
+            const paypalDetails = document.getElementById('paypal-details');
+            const upiDetails = document.getElementById('upi-details');
+            
+            paymentMethods.forEach(method => {
+                method.addEventListener('click', function() {
+                    // Remove active class from all methods
+                    paymentMethods.forEach(m => m.classList.remove('active'));
+                    
+                    // Add active class to clicked method
+                    this.classList.add('active');
+                    
+                    // Get the selected payment method
+                    const selectedMethod = this.getAttribute('data-method');
+                    
+                    // Hide all payment details
+                    cardDetails.style.display = 'none';
+                    paypalDetails.style.display = 'none';
+                    upiDetails.style.display = 'none';
+                    
+                    // Show the selected payment method details
+                    if (selectedMethod === 'card') {
+                        cardDetails.style.display = 'block';
+                    } else if (selectedMethod === 'paypal') {
+                        paypalDetails.style.display = 'block';
+                    } else if (selectedMethod === 'upi') {
+                        upiDetails.style.display = 'block';
+                    }
+                });
+            });
+            
+            // Payment processing
+            const payButton = document.getElementById('pay-button');
+            const paymentForm = document.getElementById('payment-form');
+            const paymentProcessing = document.getElementById('payment-processing');
+            const paymentSuccess = document.getElementById('payment-success');
+            const continueShopping = document.getElementById('continue-shopping');
+            const orderNumber = document.getElementById('order-number');
+            
+            payButton.addEventListener('click', function() {
+                // Get selected payment method
+                const selectedMethod = document.querySelector('.payment-method.active').getAttribute('data-method');
+                
+                // Validate form based on payment method
+                let isValid = true;
+                
+                if (selectedMethod === 'card') {
+                    const cardNumber = document.getElementById('card-number').value;
+                    const expiry = document.getElementById('expiry').value;
+                    const cvv = document.getElementById('cvv').value;
+                    const cardName = document.getElementById('card-name').value;
+                    
+                    if (!cardNumber || !expiry || !cvv || !cardName) {
+                        isValid = false;
+                        alert('Please fill in all card details');
+                    }
+                } else if (selectedMethod === 'upi') {
+                    const upiId = document.getElementById('upi-id').value;
+                    
+                    if (!upiId) {
+                        isValid = false;
+                        alert('Please enter your UPI ID');
+                    }
+                }
+                
+                if (isValid) {
+                    // Show processing state
+                    paymentForm.style.display = 'none';
+                    paymentProcessing.style.display = 'block';
+                    
+                    // Generate random order number
+                    const randomOrderNum = Math.floor(1000 + Math.random() * 9000);
+                    orderNumber.textContent = randomOrderNum;
+                    
+                    // Simulate payment processing
+                    setTimeout(function() {
+                        paymentProcessing.style.display = 'none';
+                        paymentSuccess.style.display = 'block';
+                        
+                        // Update progress steps
+                        document.querySelectorAll('.progress-step')[3].classList.add('completed');
+                        document.querySelectorAll('.progress-step')[2].classList.remove('active');
+                        document.querySelectorAll('.progress-step')[3].classList.add('active');
+                        
+                        // Clear cart after successful payment
+                        cart = [];
+                        updateCart();
+                    }, 3000);
+                }
+            });
+            
+            // Continue shopping button
+            continueShopping.addEventListener('click', function() {
+                showMainPage();
+                paymentSuccess.style.display = 'none';
+                paymentForm.style.display = 'block';
+                
+                // Reset progress steps
+                document.querySelectorAll('.progress-step')[3].classList.remove('completed');
+                document.querySelectorAll('.progress-step')[3].classList.remove('active');
+                document.querySelectorAll('.progress-step')[2].classList.add('active');
+            });
+        });
+    </script>
+</body>
+</html>
