@@ -64,11 +64,28 @@ const VirtualStylist = ({ onClose }) => {
     }
 
     let size = 'M';
-    if (shoulderCm > 48 || waistCm > 95) size = 'XL';
+    if (shoulderCm > 52 || waistCm > 105) size = 'XXL';
+    else if (shoulderCm > 48 || waistCm > 95) size = 'XL';
     else if (shoulderCm > 44 || waistCm > 88) size = 'L';
     else if (shoulderCm < 38) size = 'S';
 
-    return { height: actualHeight, shoulder: shoulderCm, waist: waistCm, size, season, hex: `rgb(${Math.round(r)},${Math.round(g)},${Math.round(b)})` };
+    const palettes = {
+        'Spring': ['#FF8C00', '#FFD700', '#32CD32', '#40E0D0', '#FF69B4'],
+        'Summer': ['#87CEEB', '#DDA0DD', '#E6E6FA', '#F08080', '#B0C4DE'],
+        'Autumn': ['#8B4513', '#D2691E', '#556B2F', '#B8860B', '#A52A2A'],
+        'Winter': ['#000080', '#800000', '#000000', '#FFFFFF', '#4B0082'],
+        'Neutral': ['#6366f1', '#a855f7', '#ec4899', '#3b82f6', '#10b981']
+    };
+
+    return { 
+        height: actualHeight, 
+        shoulder: shoulderCm, 
+        waist: waistCm, 
+        size, 
+        season, 
+        skinColor: `rgb(${Math.round(r)},${Math.round(g)},${Math.round(b)})`,
+        suggested: palettes[season] || palettes['Neutral']
+    };
   }, []);
 
   useEffect(() => {
@@ -279,46 +296,71 @@ const VirtualStylist = ({ onClose }) => {
                 </div>
             ) : (
                 <div className="flex-1 flex flex-col">
-                    <div className="text-center py-8">
-                        <CheckCircle2 className="w-20 h-20 text-emerald-500 mx-auto mb-6" />
-                        <h3 className="text-3xl font-black text-white leading-none">SCAN COMPLETE</h3>
-                        <p className="text-[12px] text-slate-500 mt-3 font-bold uppercase tracking-widest">Final Accuracy: 100%</p>
+                    <div className="text-center py-6">
+                        <CheckCircle2 className="w-16 h-16 text-emerald-500 mx-auto mb-4" />
+                        <h3 className="text-3xl font-black text-white leading-none tracking-tighter">SCAN COMPLETE</h3>
+                        <p className="text-[10px] text-slate-500 mt-2 font-bold uppercase tracking-[0.2em]">Biometric Profile Generated</p>
                     </div>
 
-                    <div className="space-y-4 flex-1">
-                        <div className="grid grid-cols-2 gap-4 text-center">
-                            <div className="p-6 rounded-[2rem] bg-white/5 border border-white/5">
-                                <p className="text-[11px] text-slate-500 uppercase font-black mb-2">Height</p>
-                                <p className="text-3xl font-black text-white">{results.height}cm</p>
+                    <div className="space-y-4 flex-1 overflow-y-auto custom-scrollbar pr-2">
+                        <div className="grid grid-cols-2 gap-3 text-center">
+                            <div className="p-5 rounded-[2rem] bg-white/5 border border-white/5 flex flex-col items-center justify-center">
+                                <p className="text-[10px] text-slate-500 uppercase font-black mb-1">Recommended Size</p>
+                                <p className="text-4xl font-black text-indigo-500 tracking-tighter">{results.size}</p>
                             </div>
-                            <div className="p-6 rounded-[2rem] bg-white/5 border border-white/5">
-                                <p className="text-[11px] text-slate-500 uppercase font-black mb-2">Season</p>
-                                <p className="text-3xl font-black text-white">{results.season}</p>
+                            <div className="p-5 rounded-[2rem] bg-white/5 border border-white/5 flex flex-col items-center justify-center">
+                                <p className="text-[10px] text-slate-500 uppercase font-black mb-1">Detected Skin</p>
+                                <div className="w-10 h-10 rounded-2xl border-2 border-white/20 shadow-2xl relative group" style={{ backgroundColor: results.skinColor }}>
+                                    <div className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity rounded-2xl" />
+                                </div>
+                                <p className="text-[10px] font-black mt-2 text-white uppercase tracking-widest">{results.season}</p>
                             </div>
                         </div>
 
-                        <div className="p-8 rounded-[2rem] bg-white/5 border border-white/5 flex flex-col gap-4">
-                            <div className="flex justify-between items-center text-sm font-bold">
-                                <span className="text-slate-400">Shoulder Width</span>
-                                <span className="text-white">{results.shoulder}cm</span>
+                        {/* Suggested Colors Palette */}
+                        <div className="p-6 rounded-[2.5rem] bg-white/5 border border-white/5">
+                            <div className="flex justify-between items-center mb-5">
+                                <h4 className="text-[10px] font-black uppercase tracking-widest text-slate-500">Suggested Palette</h4>
+                                <span className="text-[10px] bg-indigo-500/10 text-indigo-400 px-2 py-0.5 rounded-full font-bold">Best Match</span>
                             </div>
-                            <div className="flex justify-between items-center text-sm font-bold">
-                                <span className="text-slate-400">Waist</span>
-                                <span className="text-white">{results.waist}cm</span>
+                            <div className="flex justify-between items-center gap-2">
+                                {results.suggested.map((color, i) => (
+                                    <motion.div 
+                                        key={i} 
+                                        initial={{ opacity: 0, scale: 0.5 }}
+                                        animate={{ opacity: 1, scale: 1 }}
+                                        transition={{ delay: i * 0.1 }}
+                                        className="flex-1 aspect-square rounded-xl shadow-lg border border-white/10" 
+                                        style={{ backgroundColor: color }} 
+                                    />
+                                ))}
                             </div>
-                            <div className="h-px bg-white/5 my-2" />
-                            <div className="flex justify-between items-center">
-                                <span className="text-[12px] text-rose-500 font-black uppercase">Final Match</span>
-                                <span className="text-4xl font-black text-white">{results.size}</span>
+                            <p className="text-[10px] text-slate-500 mt-5 leading-relaxed italic text-center">
+                                curated collection matching your <span className="text-indigo-400 font-bold uppercase">{results.season}</span> profile.
+                            </p>
+                        </div>
+
+                        <div className="p-6 rounded-[2.5rem] bg-white/5 border border-white/5 grid grid-cols-3 gap-4 text-center">
+                            <div>
+                                <p className="text-[10px] text-slate-500 uppercase font-black mb-1">Height</p>
+                                <p className="text-lg font-black text-white">{results.height}cm</p>
+                            </div>
+                            <div>
+                                <p className="text-[10px] text-slate-500 uppercase font-black mb-1">Shoulders</p>
+                                <p className="text-lg font-black text-white">{results.shoulder}cm</p>
+                            </div>
+                            <div>
+                                <p className="text-[10px] text-slate-500 uppercase font-black mb-1">Waist</p>
+                                <p className="text-lg font-black text-white">{results.waist}cm</p>
                             </div>
                         </div>
                     </div>
 
                     <button 
                         onClick={onClose}
-                        className="w-full btn-primary !bg-white !text-slate-900 py-6 mt-8 rounded-[2rem] font-black uppercase tracking-widest text-lg"
+                        className="w-full bg-white text-slate-900 py-6 mt-6 rounded-[2rem] font-black uppercase tracking-[0.2em] text-xs hover:bg-indigo-50 transition-colors shadow-2xl shadow-indigo-500/10 active:scale-[0.98]"
                     >
-                        Apply to Storefront
+                        Synchronize Profile
                     </button>
                 </div>
             )}

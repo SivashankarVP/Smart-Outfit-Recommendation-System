@@ -5,34 +5,27 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700;800&display=swap');
 
 :root {
-  /* Common */
-  --primary: #6366f1;
-  --primary-glow: rgba(99, 102, 241, 0.4);
-  --secondary: #8b5cf6;
-  --accent: #f43f5e;
-  --success: #10b981;
-  --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  
-  /* Dark Mode Default */
-  --bg: #0f172a;
-  --surface: #1e293b;
-  --surface-hover: #334155;
-  --text: #f8fafc;
-  --text-dim: #94a3b8;
-  --border: rgba(255, 255, 255, 0.1);
-  --glass: rgba(30, 41, 59, 0.7);
-  --card-bg: rgba(255, 255, 255, 0.03);
+  /* Amazon.in Professional Palette */
+  --primary: #febd69; /* Amazon Yellow */
+  --primary-hover: #f3a847;
+  --secondary: #232f3e; /* Amazon Navy */
+  --secondary-light: #37475a;
+  --accent: #131921;
+  --bg: #eaeded; /* Amazon Base Grey */
+  --surface: #ffffff;
+  --text: #0f1111;
+  --text-dim: #565959;
+  --border: #ddd;
+  --transition: 0.15s ease;
+  --radius: 4px;
 }
 
-.light {
-  --bg: #f8fafc;
-  --surface: #ffffff;
-  --surface-hover: #f1f5f9;
-  --text: #0f172a;
-  --text-dim: #64748b;
-  --border: rgba(0, 0, 0, 0.05);
-  --glass: rgba(255, 255, 255, 0.8);
-  --card-bg: #ffffff;
+.dark {
+  --bg: #131921;
+  --surface: #232f3e;
+  --text: #ffffff;
+  --text-dim: #cccccc;
+  --border: #3a4553;
 }
 
 * {
@@ -46,60 +39,50 @@ body {
   background-color: var(--bg);
   color: var(--text);
   overflow-x: hidden;
-  transition: background-color var(--transition), color var(--transition);
   text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
 }
 
-h1, h2, h3, h4, .font-heading {
-  font-family: 'Outfit', sans-serif;
-}
-
-/* Glassmorphism */
+/* Glassmorphism Refactored to Amazon Solid */
 .glass {
-  background: var(--glass);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border-bottom: 1px solid var(--border);
+  background: var(--accent);
+  border-bottom: 1px solid #131921;
 }
 
 .glass-card {
-  background: var(--card-bg);
-  border: 1px solid var(--border);
-  border-radius: 1.5rem;
-  transition: transform var(--transition), box-shadow var(--transition), border-color var(--transition);
-  box-shadow: 0 4px 6px -1px var(--border);
-}
-
-.dark .glass-card:hover {
-  transform: translateY(-8px);
-  background: rgba(255, 255, 255, 0.05);
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
-  border-color: rgba(255, 255, 255, 0.15);
-}
-
-.light .glass-card:hover {
-  transform: translateY(-8px);
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
-  border-color: var(--primary);
-}
-
-/* Buttons */
-.btn-primary {
-  background: linear-gradient(135deg, var(--primary), var(--secondary));
-  color: white;
+  background: var(--surface);
   border: none;
-  padding: 0.85rem 1.75rem;
-  border-radius: 1rem;
-  font-weight: 700;
+  border-radius: var(--radius);
+  transition: transform var(--transition);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+  display: flex;
+  flex-direction: column;
+}
+
+.glass-card:hover {
+  transform: none;
+}
+
+/* Buttons (Amazon Style) */
+.btn-primary {
+  background: var(--primary);
+  color: #0f1111;
+  border: 1px solid #a88734;
+  border-radius: 8px;
+  padding: 0.5rem 1rem;
+  font-weight: 500;
   cursor: pointer;
   transition: all var(--transition);
+  box-shadow: 0 2px 5px 0 rgba(213,217,217,.5);
+  font-size: 13px;
   display: inline-flex;
   align-items: center;
-  gap: 0.6rem;
-  box-shadow: 0 4px 14px 0 var(--primary-glow);
-  font-size: 0.95rem;
-  letter-spacing: -0.01em;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.btn-primary:hover {
+  background: var(--primary-hover);
+  border-color: #9c7e31;
 }
 
 .btn-primary:hover {
@@ -112,70 +95,57 @@ h1, h2, h3, h4, .font-heading {
   transform: scale(0.98);
 }
 
-/* AI Elements */
+/* Amazon Badges */
 .badge-ai {
-  background: linear-gradient(45deg, #FFD700, #FFA500);
-  color: #000;
-  padding: 0.4rem 0.8rem;
-  border-radius: 0.75rem;
-  font-size: 0.7rem;
-  font-weight: 900;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+  background: #fff;
+  color: #0f1111;
+  border: 1px solid #d5d9d9;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 700;
+  box-shadow: 0 2px 5px rgba(213,217,217,.5);
 }
 
-/* Responsive Grid */
+/* Product Grid */
 .product-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 2rem;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 1.25rem;
 }
 
 @media (max-width: 640px) {
   .product-grid {
     grid-template-columns: 1fr;
-    gap: 1.5rem;
-  }
-  .container {
-    padding: 0 1rem;
+    gap: 1rem;
   }
 }
 
-/* Scrollbar */
+/* Scrollbar (Amazon Grey) */
 ::-webkit-scrollbar {
-  width: 6px;
+  width: 8px;
 }
 ::-webkit-scrollbar-track {
-  background: var(--bg);
+  background: #fff;
 }
 ::-webkit-scrollbar-thumb {
-  background: var(--text-dim);
-  border-radius: 10px;
-  opacity: 0.3;
+  background: #cdcdcd;
+  border-radius: 0px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--primary);
+  background: #a6a6a6;
 }
 
-/* Sidebar Custom Scrollbar */
-.custom-scrollbar::-webkit-scrollbar {
-  width: 4px;
+/* Forms */
+input[type="text"] {
+  border: 1px solid #a6a6a6;
+  border-radius: 4px;
+  padding: 0.5rem 1rem;
+  height: 40px;
 }
 
-/* Custom Checkbox/Radio */
-input[type="checkbox"], input[type="radio"] {
-  accent-color: var(--primary);
-}
-
-/* Animations */
-@keyframes shimmer {
-  0% { background-position: -200% 0; }
-  100% { background-position: 200% 0; }
-}
-
-.skeleton {
-  background: linear-gradient(90deg, var(--surface) 25%, var(--surface-hover) 50%, var(--surface) 75%);
-  background-size: 200% 100%;
-  animation: shimmer 1.5s infinite;
+input[type="text"]:focus {
+  border-color: #e77600;
+  box-shadow: 0 0 3px 2px rgba(228,121,17,.5);
+  outline: none;
 }

@@ -11,82 +11,65 @@ const ProductCard = ({ product }) => {
   return (
     <motion.div 
       layout
-      initial={{ opacity: 0, y: 20 }}
+      initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, scale: 0.9 }}
-      className="glass-card group overflow-hidden"
+      exit={{ opacity: 0, scale: 0.95 }}
+      className="bg-white border border-[#e7e7e7] rounded-sm overflow-hidden flex flex-col group h-full hover:shadow-lg transition-shadow cursor-pointer p-3"
+      onClick={() => setSelectedProduct(product)}
     >
-      <div className="relative aspect-[4/5] overflow-hidden">
+      <div className="relative aspect-square overflow-hidden mb-3">
         <img 
           src={product.image} 
           alt={product.name}
-          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+          className="w-full h-full object-contain mix-blend-multiply transition-transform duration-300 group-hover:scale-105"
         />
         
-        {/* Badges */}
-        <div className="absolute top-3 left-3 flex flex-col gap-2">
-          {product.badge && (
-            <span className={`px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider ${
-              product.badge === 'Sale' ? 'bg-red-500' : 
-              product.badge === 'New' ? 'bg-blue-500' : 'bg-green-500'
-            }`}>
-              {product.badge}
-            </span>
-          )}
-          {isAIMatch && (
-            <span className="badge-ai text-[10px]">✨ AI Choice</span>
-          )}
-          {product.discount && (
-            <span className="bg-amber-500 text-slate-900 px-2.5 py-1 rounded-md text-[10px] font-bold">
-              -{product.discount}%
-            </span>
-          )}
-        </div>
-
-        {/* Action Buttons */}
-        <div className="absolute top-3 right-3 flex flex-col gap-2 translate-x-12 group-hover:translate-x-0 transition-transform duration-300">
-          <button 
-            onClick={() => toggleWishlist(product)}
-            className={`p-2.5 rounded-full glass hover:bg-white/20 transition-all ${isWishlisted(product.id) ? 'text-rose-500 fill-rose-500' : 'text-white'}`}
-          >
-            <Heart className="w-5 h-5" />
-          </button>
-          <button 
-            onClick={() => setSelectedProduct(product)}
-            className="p-2.5 rounded-full glass hover:bg-white/20 text-white transition-all"
-          >
-            <Info className="w-5 h-5" />
-          </button>
-        </div>
-
-        {/* Quick Add Button */}
-        <div className="absolute inset-x-0 bottom-0 p-4 translate-y-full group-hover:translate-y-0 transition-transform duration-300">
-          <button 
-            onClick={() => addToCart(product, product.sizes[0])}
-            className="w-full btn-primary py-2.5 !rounded-lg justify-center text-xs"
-          >
-            <ShoppingCart className="w-4 h-4" />
-            Add to Bag
-          </button>
-        </div>
+        {isAIMatch && (
+          <div className="absolute top-0 left-0 bg-[#e67a00] text-white text-[10px] font-black px-2 py-0.5 rounded-sm">
+            AI CHOICE
+          </div>
+        )}
       </div>
 
-      <div className="p-4">
-        <div className="flex justify-between items-start mb-1">
-          <p className="text-[10px] text-indigo-500 font-black uppercase tracking-widest">{product.brand}</p>
-          <div className="flex items-center gap-1 text-amber-500">
-            <Star className="w-3.5 h-3.5 fill-current" />
-            <span className="text-xs font-bold text-slate-500">{product.rating}</span>
-          </div>
-        </div>
-        <h4 className="font-bold text-current mb-2 truncate group-hover:text-indigo-600 transition-colors">{product.name}</h4>
+      <div className="flex flex-col flex-1">
+        <h4 className="text-[14px] text-[#0f1111] mb-1 line-clamp-2 leading-tight hover:text-[#c45500]">
+            {product.name}
+        </h4>
         
-        <div className="flex items-end gap-2">
-          <span className="text-lg font-black text-current">₹{product.price}</span>
+        {/* Rating */}
+        <div className="flex items-center gap-1 mb-1">
+            <div className="flex text-[#ffa41c]">
+                {[...Array(5)].map((_, i) => (
+                    <Star key={i} className={`w-3.5 h-3.5 ${i < Math.floor(product.rating) ? 'fill-current' : 'text-[#ccc]'}`} />
+                ))}
+            </div>
+            <span className="text-[#007185] text-xs font-medium">{product.ratingsCount || '1,240'}</span>
+        </div>
+
+        {/* Price */}
+        <div className="flex items-start gap-px mt-auto">
+          <span className="text-xs font-bold mt-1">₹</span>
+          <span className="text-2xl font-medium leading-none">{product.price}</span>
           {product.originalPrice && (
-            <span className="text-xs text-slate-400 line-through mb-1">₹{product.originalPrice}</span>
+            <div className="flex items-center gap-1 ml-2">
+                <span className="text-xs text-slate-500 line-through font-light">M.R.P: ₹{product.originalPrice}</span>
+                <span className="text-xs font-bold text-[#cc0c39]">({product.discount}% off)</span>
+            </div>
           )}
         </div>
+
+        {/* Delivery Info */}
+        <div className="mt-2 space-y-0.5">
+            <p className="text-[12px] text-[#0f1111]">Get it by <span className="font-bold">Tomorrow, Oct 18</span></p>
+            <p className="text-[12px] text-[#565959]">FREE Delivery by Amazon</p>
+        </div>
+
+        <button 
+          onClick={(e) => { e.stopPropagation(); addToCart(product, product.sizes[0]); }}
+          className="mt-4 w-full bg-[#ffd814] hover:bg-[#f7ca00] text-[#0f1111] py-1.5 rounded-full text-xs font-medium border border-[#fcd200] shadow-sm active:scale-95 transition-all"
+        >
+          Add to Cart
+        </button>
       </div>
     </motion.div>
   );
