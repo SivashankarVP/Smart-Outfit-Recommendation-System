@@ -56,9 +56,11 @@ const useStore = create((set, get) => ({
   setAIResult: (r) => set({ aiResult: r }),
 
   // ---- UI ----
+  darkMode: true,
+  toggleDarkMode: () => set(s => ({ darkMode: !s.darkMode })),
   cartOpen: false,
   setCartOpen: (v) => set({ cartOpen: v }),
-  sidebarOpen: true,
+  sidebarOpen: false, // Default closed on mobile
   setSidebarOpen: (v) => set({ sidebarOpen: v }),
   selectedProduct: null,
   setSelectedProduct: (p) => set({ selectedProduct: p }),

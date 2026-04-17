@@ -10,17 +10,30 @@ import { motion } from 'framer-motion';
 
 function App() {
   const [stylistOpen, setStylistOpen] = useState(false);
-  const { aiResult } = useStore();
+  const { aiResult, darkMode, sidebarOpen, setSidebarOpen } = useStore();
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className={`min-h-screen flex flex-col transition-colors duration-300 ${darkMode ? 'dark' : 'light'}`}>
       <Navbar />
       <CartDrawer />
       
       {stylistOpen && <VirtualStylist onClose={() => setStylistOpen(false)} />}
 
-      <main className="flex-1 container py-8 pb-20">
-        <div className="flex gap-10">
+      {/* Mobile Sidebar Backdrop */}
+      <AnimatePresence>
+        {sidebarOpen && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setSidebarOpen(false)}
+            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[55] lg:hidden"
+          />
+        )}
+      </AnimatePresence>
+
+      <main className="flex-1 container py-6 md:py-10 pb-20">
+        <div className="flex gap-8 lg:gap-12">
           {/* Main Sidebar */}
           <Sidebar />
 

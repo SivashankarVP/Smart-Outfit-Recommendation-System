@@ -73,18 +73,18 @@ const ProductCard = ({ product }) => {
 
       <div className="p-4">
         <div className="flex justify-between items-start mb-1">
-          <p className="text-[10px] text-indigo-400 font-bold uppercase tracking-widest">{product.brand}</p>
-          <div className="flex items-center gap-1 text-amber-400">
+          <p className="text-[10px] text-indigo-500 font-black uppercase tracking-widest">{product.brand}</p>
+          <div className="flex items-center gap-1 text-amber-500">
             <Star className="w-3.5 h-3.5 fill-current" />
-            <span className="text-xs font-medium text-slate-300">{product.rating}</span>
+            <span className="text-xs font-bold text-slate-500">{product.rating}</span>
           </div>
         </div>
-        <h4 className="font-semibold text-slate-100 mb-2 truncate group-hover:text-indigo-400 transition-colors">{product.name}</h4>
+        <h4 className="font-bold text-current mb-2 truncate group-hover:text-indigo-600 transition-colors">{product.name}</h4>
         
         <div className="flex items-end gap-2">
-          <span className="text-lg font-bold text-white">₹{product.price}</span>
+          <span className="text-lg font-black text-current">₹{product.price}</span>
           {product.originalPrice && (
-            <span className="text-xs text-slate-500 line-through mb-0.5">₹{product.originalPrice}</span>
+            <span className="text-xs text-slate-400 line-through mb-1">₹{product.originalPrice}</span>
           )}
         </div>
       </div>

@@ -21,14 +21,14 @@ const Sidebar = () => {
   };
 
   return (
-    <div className={`fixed inset-y-0 left-0 z-[60] w-72 transform bg-slate-900 shadow-2xl transition-transform lg:relative lg:translate-x-0 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
-      <div className="flex flex-col h-full bg-slate-1000 border-r border-white/5 overflow-y-auto custom-scrollbar">
-        <div className="px-6 py-6 border-b border-white/5 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <SlidersHorizontal className="w-5 h-5 text-indigo-400" />
-            <h2 className="text-xl font-bold tracking-tight">Smart Filters</h2>
+    <div className={`fixed inset-y-0 left-0 z-[60] w-80 transform bg-white dark:bg-slate-900 shadow-2xl transition-transform lg:relative lg:translate-x-0 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
+      <div className="flex flex-col h-full border-r dark:border-white/5 overflow-y-auto custom-scrollbar">
+        <div className="px-8 py-8 border-b dark:border-white/5 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <SlidersHorizontal className="w-5 h-5 text-indigo-500" />
+            <h2 className="text-xl font-black tracking-tight uppercase">Filters</h2>
           </div>
-          <button onClick={() => setSidebarOpen(false)} className="lg:hidden p-1.5 hover:bg-white/5 rounded-md">
+          <button onClick={() => setSidebarOpen(false)} className="lg:hidden p-2 hover:bg-black/5 dark:hover:bg-white/5 rounded-xl transition-all">
             <X className="w-5 h-5" />
           </button>
         </div>
@@ -42,10 +42,10 @@ const Sidebar = () => {
                 <button
                   key={season}
                   onClick={() => setFilter('season', season)}
-                  className={`px-4 py-1.5 rounded-full text-xs font-medium transition-all ${
+                  className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${
                     filters.season === season 
                     ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/20' 
-                    : 'bg-white/5 text-slate-400 hover:bg-white/10'
+                    : 'bg-black/5 dark:bg-white/5 text-slate-500 hover:text-indigo-500'
                   }`}
                 >
                   {season}
