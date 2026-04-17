@@ -1,38 +1,73 @@
-👗 AI StyleFit | Smart Outfit Recommendation System
+# 👗 AuraFit AI | Professional Smart Styling Ecosystem
 
 <p align="center"> 
-  <img src="https://readme-typing-svg.demolab.com?font=Fira+Code&size=28&pause=1000&color=6366f1&center=true&vCenter=true&width=800&lines=AI+Fashion+Assistant;Client-Side+Computer+Vision;Netlify-Ready+Static+App;Built+with+MediaPipe+%26+JavaScript" /> 
+  <img src="https://readme-typing-svg.demolab.com?font=Fira+Code&size=30&pause=1000&color=6366f1&center=true&vCenter=true&width=800&lines=Next-Gen+AI+Fashion+Stylist;Precision+Biometric+Bio-Scan;Amazon-Tier+E-Commerce+Experience;Netlify+Optimized+React+App" /> 
 </p>
 
-📌 Overview
+## 📌 Overview
 
-StyleFit AI is a serverless, AI-powered web application that uses computer vision to recommend personalized outfits. By running MediaPipe directly in the browser, it analyzes body proportions and skin tones to deliver intelligent fashion suggestions without needing a backend server.
+**AuraFit AI** is a premium, AI-powered e-commerce platform that revolutionizes personal styling through browser-native computer vision. By leveraging high-complexity neural models via MediaPipe, it performs real-time body topology analysis and skin-tone seasonal matching to provide a "100% Fit Guarantee" without ever sending user data to a server.
 
-✨ Key Features
-- 👕 Real-Time Body Analysis – Uses MediaPipe Pose JS for measurement estimation.
-- 🎨 Skin Tone Detection – Client-side pixel analysis for color palette suggestions.
-- 🚀 Netlify Optimized – 100% static architecture for free, fast hosting.
-- 📸 Camera & Upload Support – Works with both live video and photo uploads.
-- 📱 Fully Responsive – Premium design that feels like a native mobile app.
+---
 
-🛠️ Tech Stack
-- Frontend: HTML5, CSS3 (Vanilla), JavaScript (ES6+)
-- AI/ML: MediaPipe Pose, MediaPipe Camera Utils
-- Frameworks: Bootstrap 5 (Styling), FontAwesome (Icons)
+## ✨ Advanced Features
 
-⚙️ Quick Start (Hosting)
+### 🤖 AI Styling Engine V3.0
+- **Instant Bio-Scan**: Uses face-relative calibration to measure height, shoulder width, and waist circumference with millimeter precision.
+- **Color Theory Integration**: 3-point biometric skin scan that automatically identifies your season (Spring, Summer, Autumn, Winter) and suggests a matching color palette.
+- **S - XXL Mapping**: Intelligent size recommendation engine tailored to your specific skeletal proportions.
 
-1️⃣ Deployment on Netlify:
-- Just connect your GitHub repo to Netlify.
-- Netlify will automatically detect the `index.html` at the root.
+### 🛒 Amazon-Tier E-Commerce UX
+- **Tiered Navigation**: Professional search, global account controls, and a dedicated category sub-bar for frictionless browsing.
+- **Smart Filter Drawer**: High-performance, slide-out filtering panel triggered from the top-left, keeping the storefront clean and focused.
+- **Full Checkout Flow**: Integrated multi-step shipping and secure payment (AuraPay) simulation.
+- **Wishlist & Cart**: Advanced global state management for a seamless shopping experience.
 
-2️⃣ Local Running:
-- Simply open `index.html` in any modern browser.
+### 🌗 Premium UI/UX
+- **Adaptive Themes**: Smooth Light/Dark mode transitions with a glassmorphism aesthetic.
+- **Mobile-Responsive**: Designed with a mobile-first approach, featuring a sliding filter drawer and optimized grids for all devices.
 
-🚀 Future Enhancements
-- [ ] Virtual Try-On using Three.js
-- [ ] Extended product catalog via API integration
-- [ ] Progressive Web App (PWA) support for offline use
+---
 
-📜 License
-MIT License
+## 🛠️ Modern Tech Stack
+- **Core**: [React 19](https://reactjs.org/) + [Vite](https://vitejs.dev/)
+- **State**: [Zustand](https://github.com/pmndrs/zustand) (Global Store)
+- **AI/ML**: [@mediapipe/pose](https://google.github.io/mediapipe/solutions/pose) (High Complexity Model)
+- **Animation**: [Framer Motion](https://www.framer.com/motion/)
+- **Styling**: [Tailwind CSS](https://tailwindcss.com/) + Custom CSS Variables
+- **Icons**: [Lucide React](https://lucide.dev/)
+
+---
+
+## ⚙️ Quick Start
+
+### 1️⃣ Local Development
+```bash
+# Clone the repository
+git clone https://github.com/SivashankarVP/Smart-Outfit-Recommendation-System.git
+
+# Navigate to the react app directory
+cd aurafit-react
+
+# Install dependencies
+npm install
+
+# Start the development server
+npm run dev
+```
+
+### 2️⃣ Deployment (Netlify Ready)
+- Connect your GitHub repo to **Netlify**.
+- Set the **Base Directory** to `aurafit-react`.
+- Build Command: `npm run build`.
+- Publish Directory: `aurafit-react/dist`.
+
+---
+
+## 🚀 Roadmap & Future Enhancements
+- [ ] **Virtual Try-On**: Real-time 3D overlay using [Three.js](https://threejs.org/).
+- [ ] **Social Sharing**: Share your AI Styled bio-card on Instagram/TikTok.
+- [ ] **API Sync**: Real-time inventory updates from global fashion partners.
+
+## 📜 License
+MIT License - Developed with precision by Antigravity.
