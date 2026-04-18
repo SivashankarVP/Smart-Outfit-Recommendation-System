@@ -70,4 +70,9 @@ npm run dev
 - [ ] **API Sync**: Real-time inventory updates from global fashion partners.
 
 ## 📜 License
-MIT License - Developed with precision by Antigravity.
+
+This project is licensed under the MIT License
+---
+
+Developed with ❤️ by [Sivashankar](https://github.com/SivashankarVP)
+
